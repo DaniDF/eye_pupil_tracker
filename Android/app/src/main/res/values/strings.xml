@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">CameraApp</string>
+
+    <string name="permission_camera_denied">Sorry, camera permission denied</string>
+
+    <string name="preview_image_button_start">Start preview</string>
+    <string name="preview_image_button_stop">Stop preview</string>
+    <string name="analyze_image_button_start">Analyze</string>
+    <string name="analyze_image_button_stop">Stop</string>
+    <string name="analyze_image_description">Analyzed image</string>
+</resources>
