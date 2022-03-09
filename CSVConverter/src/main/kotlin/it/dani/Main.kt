@@ -2,6 +2,7 @@ package it.dani
 
 import it.dani.csv.CsvLabelDetectionsReader
 import it.dani.csv.CsvLabelMapReader
+import it.dani.model.Box
 import it.dani.xml.XmlProducer
 import java.io.BufferedReader
 import java.io.File
@@ -57,6 +58,20 @@ fun main(args: Array<String>) {
 
     for(ld in csvLabelDetectionsReader){
         println("${ld.keys.size} detections found!")
+
+        println("Cleaning labels, only \"Human eye\" will remain")
+        ld.apply {
+            this.entries.forEach { entry ->
+                val toDelete = ArrayList<Box>()
+                entry.value.boxes.forEach { box ->
+                    if(labelMapReader.labelMap.map[box.labelName] != "Human eye") {
+                        toDelete += box
+                    }
+                }
+
+                entry.value.boxes.removeAll(toDelete)
+            }
+        }
 
         println("Producing xml files...")
 
