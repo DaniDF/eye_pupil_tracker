@@ -1,0 +1,150 @@
+---
+- hosts: trainers
+  become: yes
+  tasks:
+    - name: Install git
+      apt:
+        name:
+          - git
+          - tar
+          - unzip
+
+- hosts: trainers
+  tasks:
+    - name: Create project directory
+      ansible.builtin.file:
+        path: ./EyeTracking
+        state: directory
+
+    - name: Cloning Tensorflow models git
+      ansible.builtin.git:
+        repo: https://github.com/tensorflow/models.git
+        dest: ./EyeTracking/models
+
+    - name: Create workspace directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace
+        state: directory
+
+    - name: Create scripts directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/scripts
+        state: directory
+
+    - name: Create preprocessing directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/scripts/preprocessing
+        state: directory
+
+    - name: Create traing directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo
+        state: directory
+
+    - name: Create annotations directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/annotations
+        state: directory
+
+    - name: Create exported_models directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo/exported_models
+        state: directory
+
+    - name: Create images directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo/images
+        state: directory
+
+    - name: Create train directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo/images/train
+        state: directory
+
+    - name: Create test directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo/images/test
+        state: directory
+
+    - name: Create models directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo/models
+        state: directory
+
+    - name: Create pre-trained-models directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo/pre-trained-models
+        state: directory
+
+    - name: Create label file
+      copy:
+        dest: ./EyeTracking/workspace/annotations/label_map.pbtxt
+        content: |
+          item {
+            id: 1
+            name: "Human face"
+          }
+
+    - name: Copy object_detection model
+      ansible.builtin.copy:
+        src: ./EyeTracking/models/research/object_detection
+        dest: ./EyeTracking/workspace/scripts/preprocessing/object_detection
+        remote_src: yes
+
+    - name: Download generate TFRecord script
+      get_url:
+        url: https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/_downloads/da4babe668a8afb093cc7776d7e630f3/generate_tfrecord.py
+        dest: ./EyeTracking/workspace/scripts/preprocessing/generate_tfrecord.py
+
+    - name: Download Tensorflow model
+      get_url:
+        url: http://download.tensorflow.org/models/object_detection/tf2/20200711/efficientdet_d4_coco17_tpu-32.tar.gz
+        dest: ./EyeTracking/workspace/training_demo/pre-trained-models/
+
+    - name: Extract Tensorflow model
+      shell: tar -xf ./EyeTracking/workspace/training_demo/pre-trained-models/efficientdet_d4_coco17_tpu-32.tar.gz -C ./EyeTracking/workspace/training_demo/pre-trained-models/
+
+    - name: Create model directory
+      ansible.builtin.file:
+        path: ./EyeTracking/workspace/training_demo/models/efficientdet_d4_coco17_tpu-32
+        state: directory
+
+    - name: Copy model configuration file
+      ansible.builtin.copy:
+        src: ./EyeTracking/workspace/training_demo/pre-trained-models/efficientdet_d4_coco17_tpu-32/pipeline.config
+        dest: ./EyeTracking/workspace/training_demo/models/efficientdet_d4_coco17_tpu-32/pipeline.config
+        remote_src: yes
+
+    - name: Copy training script
+      ansible.builtin.copy:
+        src: ./EyeTracking/models/research/object_detection/model_main_tf2.py
+        dest: ./EyeTracking/workspace/training_demo/
+        remote_src: yes
+
+    - name: Copy exporter script
+      ansible.builtin.copy:
+        src: ./EyeTracking/models/research/object_detection/exporter_main_v2.py
+        dest: ./EyeTracking/workspace/training_demo/
+        remote_src: yes
+
+
+- hosts: trainers
+  become: yes
+  tasks:
+    - name: Install python
+      apt:
+        name:
+          - python
+          - python3-pip
+        state: present
+        update_cache: yes
+
+    - name: Install virtualenv
+      shell: pip3 install virtualenv
+
+    - name: Create virtual environment in project forlder
+      shell: virtualenv ./EyeTracking
+
+    - name: Install packages
+      shell: source ./EyeTracking/bin/activate ; pip install tensorflow tf_slim pycocotools pandas tf-models-official opencv-python lvis tensorflow_io
+
