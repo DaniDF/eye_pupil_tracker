@@ -2,9 +2,9 @@
 
 ## Authors
 
-+ Luigi di Nuzzo@[luigidinuzzo](https://github.com/luigidinuzzo)
-+ Daniele Foschi@[DaniDF](https://github.com/DaniDF)
-+ Filippo Veronesi@[filippoveronesi](https://github.com/filippoveronesi)
++ Luigi di Nuzzo @[luigidinuzzo](https://github.com/luigidinuzzo)
++ Daniele Foschi @[DaniDF](https://github.com/DaniDF)
++ Filippo Veronesi @[filippoveronesi](https://github.com/filippoveronesi)
 
 ## Folders
 
