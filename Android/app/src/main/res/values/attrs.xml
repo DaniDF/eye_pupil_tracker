@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="button_primary_color" format="reference" />
+    <attr name="button_secondary_color" format="reference" />
+
+</resources>

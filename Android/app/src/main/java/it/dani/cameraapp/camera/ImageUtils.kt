@@ -4,7 +4,10 @@ import android.graphics.*
 import android.media.Image
 import java.io.ByteArrayOutputStream
 
-
+/**
+ * @author Daniele
+ */
+@Deprecated("To be deleted")
 object ImageUtils {
     fun Image.toBitmap(): Bitmap {
         val yBuffer = planes[0].buffer

@@ -3,6 +3,17 @@
 
     <string name="permission_camera_denied">Sorry, camera permission denied</string>
 
+    <string name="game_button">Play game</string>
+    <string name="calibration_button">Calibration</string>
+    <string name="nerd_button">Nerd</string>
+
+    <string name="calibration_dot_tl">Calibration top left</string>
+    <string name="calibration_dot_tr">Calibration top right</string>
+    <string name="calibration_dot_cc">Calibration center</string>
+    <string name="calibration_dot_bl">Calibration bottom left</string>
+    <string name="calibration_dot_br">Calibration bottom right</string>
+    <string name="calibration_result">DONE</string>
+
     <string name="preview_image_button_start">Start preview</string>
     <string name="preview_image_button_stop">Stop preview</string>
     <string name="analyze_image_button_start">Analyze</string>

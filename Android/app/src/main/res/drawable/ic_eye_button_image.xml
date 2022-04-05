@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="238"
+    android:viewportHeight="238">
+  <path
+      android:pathData="M119,119m-119,0a119,119 0,1 1,238 0a119,119 0,1 1,-238 0"
+      android:strokeWidth="17"
+      android:fillColor="?attr/button_secondary_color"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M119,119m-110.5,0a110.5,110.5 0,1 1,221 0a110.5,110.5 0,1 1,-221 0"
+      android:strokeWidth="17"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/button_primary_color"/>
+  <path
+      android:pathData="M119,119m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0"
+      android:strokeWidth="1"
+      android:fillColor="?attr/button_primary_color"
+      android:strokeColor="#00000000"/>
+  <path
+      android:pathData="M119,119m-74.5,0a74.5,74.5 0,1 1,149 0a74.5,74.5 0,1 1,-149 0"
+      android:strokeWidth="1"
+      android:fillColor="#00000000"
+      android:strokeColor="?attr/button_primary_color"/>
+</vector>

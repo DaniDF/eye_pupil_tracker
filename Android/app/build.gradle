@@ -11,7 +11,7 @@ android {
         minSdk 21
         targetSdk 31
         versionCode 1
-        versionName "1.0.3"
+        versionName "1.0.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -47,14 +47,15 @@ dependencies {
     implementation 'androidx.camera:camera-core:1.0.2'
     implementation 'androidx.camera:camera-camera2:1.0.2'
     implementation 'androidx.camera:camera-lifecycle:1.0.2'
-    implementation 'androidx.camera:camera-view:1.1.0-beta01'
-    implementation 'androidx.camera:camera-extensions:1.1.0-beta01'
+    implementation 'androidx.camera:camera-view:1.1.0-beta02'
+    implementation 'androidx.camera:camera-extensions:1.1.0-beta02'
 
     implementation 'org.tensorflow:tensorflow-lite-support:0.1.0'
     implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0'
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.2.0'
 
     implementation 'com.google.mlkit:object-detection-custom:17.0.0'
+    implementation 'com.google.mlkit:object-detection:17.0.0'
     implementation 'org.tensorflow:tensorflow-lite:2.4.0'
 
     testImplementation 'junit:junit:4.13.2'
