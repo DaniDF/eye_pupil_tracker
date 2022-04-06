@@ -16,7 +16,8 @@
 \usepackage{doi}
 \usepackage[italian]{babel} %lingua principale
 \setcitestyle{aysep={,}}
-
+\linespread{1.4} %interlinea
+\renewcommand{\familydefault}{\sfdefault}
 
 
 \title{EYE TRACKER}
@@ -69,33 +70,64 @@ Alma Mater Studiorum - Università di Bologna\\
 \newpage
 \setcounter{page}{1}
 \section{Introduzione}
-\lipsum[2]
-\lipsum[3]
+Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando una rete neurale,
+sia in grado di riconoscere il volto dell’utente e di questo ultimo, anche i propri occhi. Il sistema sfrutterà un modello di rete neurale
+addestrato in modo tale da essere in grado di riconoscere i visi e gli occhi di uno o più utenti grazie ad un dataset di 10 mila immagini di visi umani.
+L’applicativo permetterà sia di svolgere un filtraggio "live", cioè aprendo la camera frontale ed esterna dello smartphone
+e individuando real-time la faccia e gli occhi dell’utente, !!!! sia uno “statico” in cui si selezionano dalla galleria
+una foto e in output vengono riconosciuti gli occhi !!!! DA VEDERE SE METTERE. !!!!!
+\newline
+Inoltre, è stato implementato un gioco (SPIEGAZIONE) aiutato da un tool di calibrazione.
+\newline \newline
+Tale caso di studio è un classico esempio di applicazione di machine learning e il software farà ricorso
+a una rete neurale convoluzionale (CNN). Tale scelta è dovuta al fatto che una rete neurale
+rappresenta il modo più comodo e pratico per problemi di object detection, come quello di questa
+attività in cui vengono individuati gli occhi.
+\newline \newline
+L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale progetto pone attenzione
+anche all’uso di risorse in quanto dovrà funzionare su smartphone, ovvero dispositivi embedded.
+
 \newpage
 
 \section{Rete Neurale}
-\label{sec:headings}
+L’obbiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di
+riconoscere gli occhi di una o più persone. A tal scopo si è utilizzato un modello messo a disposizione dalla libreria
+TensorFlow ottimizzato per il training di modelli specifici per object detection di immagini. Visto
+l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per ResNet e MobileNet,
+una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato
+per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da
+essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una
+precisione adeguata.
 
-\lipsum[4] See Section \ref{sec:headings}.
 
 \subsection{Dataset}
-\lipsum[5]
-\begin{equation}
-	\xi _{ij}(t)=P(x_{t}=i,x_{t+1}=j|y,v,w;\theta)= {\frac {\alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}{\sum _{i=1}^{N} \sum _{j=1}^{N} \alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}}
-\end{equation}
+Per il training del modello si è utlizzato un dataset pubblico rilasciato da Google (LINK DA INSERIRE) contenente 10 mila immagini di visi umani, dove ogni foto conteneva da uno a più visi umani.
+\newline
+Oltre alle immagini il dataset conteneva un utile file Excel che indicava le coordinate della posizione degli occhi delle persone all'interno dell'immagine.
+\newline \newline
+Prima dell'addestramento della rete era però necessario convertire questi dati di input in file XML in modo tale da poterli poi convertire in TFRecord, utili per Tensorflow. Per questo motivo è stato implementato uno script Java in grado di creare un file XML per ogni foto del dataset con al suo interno le informazioni geografiche della posizione degli occhi. 
 
-\subsubsection{Training}
-\lipsum[6]
 
-\paragraph{Paragraph}
-\lipsum[7]
+\subsection{Training}
+Si è quindi proceduto all’addestramento della rete
+tramite Python usando TensorFlow e le API di Keras. Si è ottenuto in output un modello addestrato
+e pronto all’uso. 
+\newline \newline
+Prima di testare direttamente su Andorid, abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib, utile per visualizzare graficamente via shell i nostri risultati. In particolare abbiamo usato Tkinter, l'unico framework GUI incluso nella libreria standard di Python.
+A fini di testing si è preso ad esempio il volto di un
+personaggio pubblico, quello di Donald Trump (INSERIRE FOTO GUI tkAgg PUTIN O ALTRI MEGLIO).
+
+
+\subsection{TfLite}
+Dopo esserci accertati che la rete funzionasse correttamente e avesse dei livelli di precisione sopra una certa soglia, si è ottenuto in output un modello addestrato
+e pronto all’uso, che poi è stato convertito in un formato adatto ai sistemi embedded, quello di TensorFlow Lite.
 
 
 \newpage
 \section{Progetto Android}
 \label{sec:others}
 
-\subsection{Citations}
+\subsection{Nerd Mode}
 Citations use \verb+natbib+. The documentation may be found at
 \begin{center}
 	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
@@ -103,7 +135,7 @@ Citations use \verb+natbib+. The documentation may be found at
 
 Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, hadash2018estimate} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
 
-\subsection{Figures}
+\subsection{Calibration}
 \lipsum[10]
 See Figure \ref{fig:fig1}. Here is how you add footnotes. \footnote{Sample of the first footnote.}
 \lipsum[11]
@@ -115,7 +147,7 @@ See Figure \ref{fig:fig1}. Here is how you add footnotes. \footnote{Sample of th
 	\label{fig:fig1}
 \end{figure}
 
-\subsection{Tables}
+\subsection{Game}
 See awesome Table~\ref{tab:table}.
 
 The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is available from:
@@ -126,12 +158,19 @@ The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is
 
 
 
-\subsection{Lists}
+
 
 
 \newpage
 \section{Conclusioni}
-
+Gli obiettivi del progetto sono stati raggiunti a pieno e con risultati soddisfacenti. 
+\newline \newline
+L’applicativo è
+conforme alle aspettative e svolge i compiti adeguatamente.
+Le parti realizzate
+in Android risultano con prestazione adeguate.
+\newline \newline
+Il modello addestrato restituisce un output corretto la maggior parte delle volte con una precisione di eye tracking del 95\%.
 
 \newpage
 \bibliographystyle{unsrtnat}
