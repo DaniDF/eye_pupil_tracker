@@ -20,6 +20,8 @@
 \renewcommand{\familydefault}{\sfdefault}
 
 
+
+
 \title{EYE TRACKER}
 
 \author{Luigi di Nuzzo,
@@ -56,18 +58,30 @@ Alma Mater Studiorum - Università di Bologna\\
 \begin{document}
 \maketitle
 
+
+
 \newpage
+
+\clearpage
+
+\null
+
+\clearpage
+
+\newpage
+
 \tableofcontents
-\thispagestyle{empty}
-
-\newpage
-
-
-
-
 
 
 \newpage
+
+
+
+
+
+
+\newpage
+\fancyfoot[L]{\thepage}
 \setcounter{page}{1}
 \section{Introduzione}
 Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando una rete neurale,
@@ -101,11 +115,11 @@ precisione adeguata.
 
 
 \subsection{Dataset}
-Per il training del modello si è utlizzato un dataset pubblico rilasciato da Google (LINK DA INSERIRE) contenente 10 mila immagini di visi umani, dove ogni foto conteneva da uno a più visi umani.
+Per il training del modello si è utilizzato un dataset pubblico rilasciato da Google (LINK DA INSERIRE) contenente 10 mila immagini di visi umani, dove ogni foto conteneva da uno a più visi umani.
 \newline
 Oltre alle immagini il dataset conteneva un utile file Excel che indicava le coordinate della posizione degli occhi delle persone all'interno dell'immagine.
 \newline \newline
-Prima dell'addestramento della rete era però necessario convertire questi dati di input in file XML in modo tale da poterli poi convertire in TFRecord, utili per Tensorflow. Per questo motivo è stato implementato uno script Java in grado di creare un file XML per ogni foto del dataset con al suo interno le informazioni geografiche della posizione degli occhi. 
+Prima dell'addestramento della rete era però necessario convertire questi dati di input in file XML in modo tale da poterli poi convertire in TFRecord, utili per TensorFlow. Per questo motivo è stato implementato uno script Java in grado di creare un file XML per ogni foto del dataset con al suo interno le informazioni geografiche della posizione degli occhi. 
 
 
 \subsection{Training}
@@ -113,12 +127,13 @@ Si è quindi proceduto all’addestramento della rete
 tramite Python usando TensorFlow e le API di Keras. Si è ottenuto in output un modello addestrato
 e pronto all’uso. 
 \newline \newline
-Prima di testare direttamente su Andorid, abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib, utile per visualizzare graficamente via shell i nostri risultati. In particolare abbiamo usato Tkinter, l'unico framework GUI incluso nella libreria standard di Python.
+Prima di testare direttamente su Android, abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib, utile per visualizzare graficamente via shell i nostri risultati. In particolare abbiamo usato Tkinter, l'unico framework GUI incluso nella libreria standard di Python.
+\newline
 A fini di testing si è preso ad esempio il volto di un
-personaggio pubblico, quello di Donald Trump (INSERIRE FOTO GUI tkAgg PUTIN O ALTRI MEGLIO).
+personaggio pubblico, quello di Barack Obama, e anche un'immagine contenente più persone in modo tale da poter verificare la correttezza e la precisione della rete anche in condizioni più difficili. (INSERIRE FOTO GUI tkAgg OBAMA e PIU PERSONE)
 
 
-\subsection{TfLite}
+\subsection{TFLite}
 Dopo esserci accertati che la rete funzionasse correttamente e avesse dei livelli di precisione sopra una certa soglia, si è ottenuto in output un modello addestrato
 e pronto all’uso, che poi è stato convertito in un formato adatto ai sistemi embedded, quello di TensorFlow Lite.
 
@@ -176,30 +191,6 @@ Il modello addestrato restituisce un output corretto la maggior parte delle volt
 \bibliographystyle{unsrtnat}
 \bibliography{references}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
 
-
-%%% Uncomment this section and comment out the \bibliography{references} line above to use inline references.
-% \begin{thebibliography}{1}
-
-% 	\bibitem{kour2014real}
-% 	George Kour and Raid Saabne.
-% 	\newblock Real-time segmentation of on-line handwritten arabic script.
-% 	\newblock In {\em Frontiers in Handwriting Recognition (ICFHR), 2014 14th
-% 			International Conference on}, pages 417--422. IEEE, 2014.
-
-% 	\bibitem{kour2014fast}
-% 	George Kour and Raid Saabne.
-% 	\newblock Fast classification of handwritten on-line arabic characters.
-% 	\newblock In {\em Soft Computing and Pattern Recognition (SoCPaR), 2014 6th
-% 			International Conference of}, pages 312--318. IEEE, 2014.
-
-% 	\bibitem{hadash2018estimate}
-% 	Guy Hadash, Einat Kermany, Boaz Carmeli, Ofer Lavi, George Kour, and Alon
-% 	Jacovi.
-% 	\newblock Estimate and replace: A novel approach to integrating deep neural
-% 	networks with existing applications.
-% 	\newblock {\em arXiv preprint arXiv:1804.09028}, 2018.
-
-% \end{thebibliography}
 
 
 \end{document}
