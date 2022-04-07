@@ -64,7 +64,6 @@ class GameActivity : AppCompatActivity() {
     private fun displayAnswerButtons(question: Question) {
         val gameActivity = findViewById<View>(R.id.game_activity)
 
-
         val answers = mutableListOf(question.correctAnswer).also { a -> a.addAll(question.incorrectAnswer) }
 
         this.buttons.forEachIndexed { i,b ->

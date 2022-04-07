@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -13,7 +14,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.material.snackbar.Snackbar
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.ObjectDetection
 import it.dani.cameraapp.mock.EyeTrackingDetectorMock
@@ -40,6 +40,11 @@ class CalibrationActivity : AppCompatActivity() {
      */
     private lateinit var dots : List<ImageButton>
 
+    /**
+     * @property[beenAskedPermission] Remember if is the first time asking for permissions
+     */
+    private var beenAskedPermission = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         super.setContentView(R.layout.calibration_activity)
@@ -60,7 +65,10 @@ class CalibrationActivity : AppCompatActivity() {
         //this.animationThread = this.animation(dots)
 
         if(!PermissionUtils.permissionGranted(this, arrayOf(Manifest.permission.CAMERA))) {
-            ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.CAMERA),0xA1)
+            if(!this.beenAskedPermission) {
+                this.beenAskedPermission = true
+                ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.CAMERA),0xA1)
+            }
         } else {
             this.provideCamera()
         }
@@ -68,7 +76,9 @@ class CalibrationActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        this.animationThread.shutdownNow()
+        if(this::animationThread.isInitialized) {
+            this.animationThread.shutdownNow()
+        }
         this.undoCamera()
     }
 
@@ -91,9 +101,7 @@ class CalibrationActivity : AppCompatActivity() {
                 if(flagOK) {
                     this.provideCamera()
                 } else {
-                    Snackbar.make(this.findViewById(R.id.main_view),
-                        R.string.permission_camera_denied,
-                        Snackbar.LENGTH_SHORT).show()
+                    Toast.makeText(this,R.string.permission_camera_denied,Toast.LENGTH_SHORT).show()
                 }
             }
         }

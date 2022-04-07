@@ -6,10 +6,7 @@ import android.graphics.*
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -37,12 +34,24 @@ import java.lang.StringBuilder
 
 class EyeTrackingActivity : AppCompatActivity() {
 
+    /**
+     * @property[beenAskedPermission] Remember if is the first time asking for permissions
+     */
+    private var beenAskedPermission = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.eye_tracking_activity)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         if(!PermissionUtils.permissionGranted(this, arrayOf(Manifest.permission.CAMERA))) {
-            ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.CAMERA),0xA1)
+            if(!this.beenAskedPermission) {
+                this.beenAskedPermission = true
+                ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.CAMERA),0xA1)
+            }
         } else {
             this.provideCamera()
         }
@@ -67,9 +76,7 @@ class EyeTrackingActivity : AppCompatActivity() {
                 if(flagOK) {
                     this.provideCamera()
                 } else {
-                    Snackbar.make(this.findViewById(R.id.main_view),
-                        R.string.permission_camera_denied,
-                        Snackbar.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show()
                 }
             }
         }
