@@ -19,6 +19,8 @@ import it.dani.cameraapp.camera.ObjectDetection
 import it.dani.cameraapp.mock.EyeTrackingDetectorMock
 import it.dani.cameraapp.motion.EyeMotionDetector
 import it.dani.cameraapp.view.utils.PermissionUtils
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * @author Daniele
@@ -31,7 +33,7 @@ class CalibrationActivity : AppCompatActivity() {
     /**
      * @property[animationThread] The last launched animation thread
      */
-    private lateinit var animationThread : Thread
+    private lateinit var animationThread : ExecutorService
 
     /**
      * @property[dots] A list of displayed dots
@@ -66,7 +68,7 @@ class CalibrationActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        this.animationThread.interrupt()
+        this.animationThread.shutdownNow()
         this.undoCamera()
     }
 
@@ -144,22 +146,22 @@ class CalibrationActivity : AppCompatActivity() {
             var eyeDown : () -> Unit = {}
 
             eyeRight = {
-                this@CalibrationActivity.animationThread.interrupt()
+                this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tr)))
                 onEyeRight -= eyeRight
             }
             eyeDown = {
-                this@CalibrationActivity.animationThread.interrupt()
+                this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_br)))
                 onEyeDown -= eyeDown
             }
             eyeLeft = {
-                this@CalibrationActivity.animationThread.interrupt()
+                this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_bl)))
                 onEyeLeft -= eyeLeft
             }
             eyeUp = {
-                this@CalibrationActivity.animationThread.interrupt()
+                this@CalibrationActivity.animationThread.shutdownNow()
                 onEyeUp -= eyeUp
             }
 
@@ -189,47 +191,47 @@ class CalibrationActivity : AppCompatActivity() {
     /**
      * This method performs a predefined animation with [dots]
      */
-    private fun animation(objs : List<View>) : Thread {
-        return Thread {
-
-            runOnUiThread {
-                findViewById<TextView>(R.id.calibration_result_text).apply {
-                    visibility = View.GONE
-                }
-            }
-
-            try {
-                val pulse = this.pulseAnimation(objs)
-                Thread.sleep(5000)
-                pulse.interrupt()
-
-                objs.forEach {
-                    runOnUiThread {
-                        it.background.alpha = (255 * 0.15).toInt()
-                    }
-                }
-
-                /*
-                objs.forEach {
-                    val pulseO = this.pulseAnimation(listOf(it))
-                    Thread.sleep(2500)
-                    pulseO.interrupt()
-
-                    runOnUiThread {
-                        it.background.alpha = (255 * 0.15).toInt()
-                    }
-                }
-                */
-
+    private fun animation(objs : List<View>) : ExecutorService {
+        return Executors.newCachedThreadPool().also {
+            it.execute {
                 runOnUiThread {
                     findViewById<TextView>(R.id.calibration_result_text).apply {
-                        visibility = View.VISIBLE
+                        visibility = View.GONE
                     }
                 }
 
-            } catch (e : InterruptedException) {}
+                try {
+                    val pulse = this.pulseAnimation(objs)
+                    Thread.sleep(5000)
+                    pulse.shutdownNow()
 
-        }.apply { start() }
+                    objs.forEach {
+                        runOnUiThread {
+                            it.background.alpha = (255 * 0.15).toInt()
+                        }
+                    }
+
+                    /*
+                    objs.forEach {
+                        val pulseO = this.pulseAnimation(listOf(it))
+                        Thread.sleep(2500)
+                        pulseO.interrupt()
+
+                        runOnUiThread {
+                            it.background.alpha = (255 * 0.15).toInt()
+                        }
+                    }
+                    */
+
+                    runOnUiThread {
+                        findViewById<TextView>(R.id.calibration_result_text).apply {
+                            visibility = View.VISIBLE
+                        }
+                    }
+
+                } catch (e : InterruptedException) {}
+            }
+        }
     }
 
     /**
@@ -238,43 +240,44 @@ class CalibrationActivity : AppCompatActivity() {
      * @param[objs] A list of views
      * @return The thread that actually is performing the animation
      */
-    private fun pulseAnimation(objs : List<View>) : Thread {
-        return Thread {
-            var value = 0
-            var descending = false
+    private fun pulseAnimation(objs : List<View>) : ExecutorService {
+        return Executors.newCachedThreadPool().also {
+            it.execute {
+                var value = 0
+                var descending = false
 
-            try {
-                while(true) {
-                    Thread.sleep(5)
+                try {
+                    while(true) {
+                        Thread.sleep(5)
 
-                    objs.forEach {
-                        runOnUiThread {
-                            it.background.alpha = value
+                        objs.forEach {
+                            runOnUiThread {
+                                it.background.alpha = value
+                            }
+                        }
+
+                        value = if(descending) {
+                            if(value == 0) {
+                                descending = false
+                                value + 1
+                            } else {
+                                value - 1
+                            }
+                        } else {
+                            if(value == 255) {
+                                descending = true
+                                value - 1
+                            } else {
+                                value + 1
+                            }
                         }
                     }
-
-                    value = if(descending) {
-                        if(value == 0) {
-                            descending = false
-                            value + 1
-                        } else {
-                            value - 1
-                        }
-                    } else {
-                        if(value == 255) {
-                            descending = true
-                            value - 1
-                        } else {
-                            value + 1
-                        }
+                } catch (e : InterruptedException) {
+                    runOnUiThread {
+                        this.resetOpacity(objs)
                     }
-                }
-            } catch (e : InterruptedException) {
-                runOnUiThread {
-                    this.resetOpacity(objs)
                 }
             }
-
-        }.apply { start() }
+        }
     }
 }

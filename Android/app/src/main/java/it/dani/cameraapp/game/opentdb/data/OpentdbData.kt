@@ -10,11 +10,19 @@ import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.URL
 
+/**
+ * @author Daniele
+ *
+ * This class represents the json data fetched from Opentbd website
+ */
 private data class OpentdbData(
     var response_code : Int,
     var results : MutableList<Result>
 )
 
+/**
+ * This class represents the json data fetched from Opentbd website
+ */
 private data class Result(
     val category : String,
     val type : String,
@@ -24,8 +32,18 @@ private data class Result(
     val incorrect_answers : MutableList<String>
 )
 
+/**
+ * This class is an utils for fetching data from Opentdb website via HTTP connection
+ */
 class OpentdbUtils {
     companion object {
+
+        /**
+         * This function fetch [OpentdbData] from a given url
+         *
+         * @param[urlS] Url where object are fetched from
+         * @return Returns an [QuestionDB] that is a [OpentdbData] converted
+         */
         fun fetch(urlS : String) : QuestionDB {
             val url = URL(urlS)
             val conn = url.openConnection() as HttpURLConnection
@@ -43,6 +61,12 @@ class OpentdbUtils {
             return convert(gson.fromJson(resultJson.toString(),OpentdbData::class.java))
         }
 
+        /**
+         * This function converts an [OpentdbData] object into a [QuestionDB] object
+         *
+         * @param[data] The [OpentdbData] object
+         * @return The [QuestionDB] object converted
+         */
         private fun convert(data: OpentdbData) : QuestionDB {
             val questionList = ArrayList<Question>()
 

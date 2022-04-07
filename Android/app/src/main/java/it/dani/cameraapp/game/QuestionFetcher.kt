@@ -4,20 +4,32 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import it.dani.cameraapp.game.opentdb.data.OpentdbUtils
 import java.io.IOException
+import java.util.concurrent.Executor
 
-class QuestionFetcher(private val context: AppCompatActivity) {
+/**
+ * @author Daniele
+ *
+ * This class fetch a list of questions from the specified url ([URL_API])
+ */
+class QuestionFetcher() {
 
+    /**
+     * @property[onSuccess] A list of handler fired when the request is completed
+     */
     val onSuccess : MutableList<(QuestionDB) -> Any> = ArrayList()
 
+    /**
+     * This method requires the fetching action
+     */
     fun fetch() {
-        Thread {
+        Executor { Thread(it).start() }.execute {
             try {
                 val result = OpentdbUtils.fetch(URL_API)
-                this.onSuccess.forEach { this.context.runOnUiThread { it(result) } }
+                this.onSuccess.forEach { it(result) }
             } catch (e : IOException) {
                 Log.e("Game","Error while fetching questions, ${e.message}")
             }
-        }.start()
+        }
     }
 
     companion object {
