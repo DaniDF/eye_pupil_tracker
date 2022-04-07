@@ -4,4 +4,6 @@
     <attr name="button_primary_color" format="reference" />
     <attr name="button_secondary_color" format="reference" />
 
+    <attr name="game_question_background" format="reference" />
+
 </resources>

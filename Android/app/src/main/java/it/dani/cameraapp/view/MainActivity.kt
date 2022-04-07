@@ -38,8 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
         this.gyroscopeListener = GyroscopeListener.get().apply {
             onChange += {
-                val calc = (((it.values[0] + 10) * 10).toInt() / 200f)
-                Log.d("Gyroscope","${it.values[0]} - $calc")
+                val calc = (((it.values[0] + 10) * 100).toInt() / 2000f)
                 findViewById<ImageView>(R.id.imageBackground).apply {
                     val params = layoutParams as ConstraintLayout.LayoutParams
                     params.horizontalBias = calc
@@ -53,6 +52,9 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         findViewById<Button>(R.id.gameButton).apply {
             setOnClickListener {
+                val intent = Intent(this@MainActivity,GameActivity::class.java)
+                this@MainActivity.startActivity(intent)
+
                 this.setOnClickListener {  }
             }
         }

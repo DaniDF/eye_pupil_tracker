@@ -21,4 +21,9 @@
     <string name="analyze_image_button_start">Analyze</string>
     <string name="analyze_image_button_stop">Stop</string>
     <string name="analyze_image_description">Analyzed image</string>
+
+    <string name="game_question_lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer sed est sapien. Sed velit ex, eleifend gravida turpis non, feugiat.</string>
+    <string name="game_answer_correct">Correct</string>
+    <string name="game_answer_wrong">Wrong</string>
+
 </resources>
