@@ -1,72 +1,185 @@
+%Questo è il preambolo, dove si inseriscono i pacchetti e le impostazioni che servono per compilare il documento. Quanto scritto dopo il simbolo '%' è solo un commento e serve a fini dimostrativi.
+
 \documentclass[11pt]{article}
-
-\usepackage{report}
-
-\usepackage[utf8]{inputenc} % allow utf-8 input
-\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
-\usepackage[colorlinks=true, linkcolor=black, citecolor=blue, urlcolor=blue]{hyperref}       % hyperlinks
-\usepackage{url}            % simple URL typesetting
-\usepackage{booktabs}       % professional-quality tables
-\usepackage{amsfonts}       % blackboard math symbols
-\usepackage{nicefrac}       % compact symbols for 1/2, etc.
-\usepackage{microtype}      % microtypography
-\usepackage{lipsum}		% Can be removed after putting your text content
+\linespread{1.6} %interlinea
+\pagestyle{plain}
+\usepackage{geometry} %margini
+\geometry{a4paper, top=3cm, bottom=3cm, left=3cm, right=3cm, bindingoffset=5mm}
 \usepackage{graphicx}
-\usepackage{natbib}
-\usepackage{doi}
+\graphicspath{immagini/}
+\usepackage{multicol} %più colonne
+\usepackage{ragged2e} %allineamento testo
+
 \usepackage[italian]{babel} %lingua principale
-\setcitestyle{aysep={,}}
-\linespread{1.4} %interlinea
+
+\usepackage{minitoc} %mini sommario a inizio capitolo
+\nomtcrule 
+\addto{\captionsitalian}{% Making babel aware of special titles
+  \renewcommand{\mtctitle}{Sommario}
+}
+
+
+
+
+\usepackage[sorting=none,backend=biber]{biblatex} %bibliografia
+\defbibheading{bibbysubsect}{\section*{}}
+\addbibresource{bibliografia.bib}
+
+
+
+
+
+
+\usepackage{comment}
+
+
+
+\begin{comment}
+
+
 \renewcommand{\familydefault}{\sfdefault}
 
 
 
+\end{comment}
 
-\title{EYE TRACKER}
 
-\author{Luigi di Nuzzo,
-Daniele Foschi,
-Filippo Veronesi\\
-\AND
-\AND
-\AND
-\AND
-\AND
-	Dipartimento di Informatica - Scienza e Ingegneria (DISI)\\
-\AND
-Alma Mater Studiorum - Università di Bologna\\
-}
 
-% Uncomment to remove the date
-\date{Aprile 2022}
+    
 
-% Uncomment to override  the `A preprint' in the header
-\renewcommand{\headeright}{Progetto e Attività Progettuale Sistemi Digitali M}
-\renewcommand{\undertitle}{Progetto e Attività Progettuale Sistemi Digitali M}
-\renewcommand{\shorttitle}{}
 
-%%% Add PDF metadata to help others organize their library
-%%% Once the PDF is generated, you can check the metadata with
-%%% $ pdfinfo template.pdf
-% \hypersetup{
-% pdftitle={A template for the arxiv style},
-% pdfsubject={q-bio.NC, q-bio.QM},
-% pdfauthor={David S.~Hippocampus, Elias D.~Striatum},
-% pdfkeywords={First keyword, Second keyword, More},
-% }
+    
 
+
+    
+
+
+
+
+
+
+
+
+\usepackage{xpatch}
+\usepackage{blindtext}
+\usepackage{url}
+
+
+\makeatletter
+
+\xpatchcmd{\@makeschapterhead}{%
+  \Huge \bfseries  #1\par\nobreak%
+}{%
+  \Huge \bfseries\centering #1\par\nobreak%
+}{\typeout{Patched makeschapterhead}}{\typeout{patching of @makeschapterhead failed}}
+
+
+\xpatchcmd{\@makechapterhead}{%
+  \huge\bfseries \@chapapp\space \thechapter
+}{%
+  \huge\bfseries\centering \@chapapp\space \thechapter
+}{\typeout{Patched @makechapterhead}}{\typeout{Patching of @makechapterhead failed}}
+
+\makeatother
+
+\usepackage{fancyhdr}
+\usepackage[export]{adjustbox}
+
+
+
+\usepackage{hyperref} %hyperlink
+\hypersetup{
+    colorlinks=true,
+    citecolor=cyan,
+    linkcolor=black,
+    urlcolor=black,
+    pdftitle=TesiFilippoVeronesi,
+    pdfauthor= Filippo Veronesi,
+    }
+
+\usepackage{booktabs} %per le tabelle
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{graphicx}
+
+\usepackage{lscape}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{epigraph}
+\usepackage{fancyhdr}
+%Da qui in poi inizia il documento.
 \begin{document}
-\maketitle
+\begin{titlepage} %Cambia i valori in \vspace{} per ottenere un risultato perfetto
+
+\begin{center}
+	{\upshape\Large\bfseries ALMA MATER STUDIORUM - UNIVERSITÀ \\ DI BOLOGNA \par}
+
+	\vspace{0,8cm}
+		\hrule
+	\vspace{0,9cm}
+	\vspace{0,3cm}
+	{\upshape\small DIPARTIMENTO DI INFORMATICA - SCIENZA E INGEGNERIA\par} 
+	\vspace{0,2cm}
+	\vspace{0.5cm}
+	
+	\vspace{1,4cm}
+	{\upshape\large\bfseries PROGETTO E ATTIVITÀ PROGETTUALE IN SISTEMI DIGITALI M\par}
+	
+			
+	\vspace{2.3cm}
+
+	{\upshape\large\bfseries EYE TRACKER\par}
+	\vspace{2.5cm}
+	{\upshape\large\bfseries Luigi di Nuzzo - Daniele Foschi - Filippo Veronesi\par}
+	\end{center}
+	
+	
+	
+	\vfill
+	\hrule
+% Bottom of the page
+	{\begin{center}
+	\vspace{0.3cm}
+	     \schape\large Anno Accademico 2021/2022 \\
+	     \schape\large Maggio 2022
+	\end{center}}
+
+\end{titlepage}
 
 
+\fancyhf{}
+\pagestyle{fancy}
+\newcommand{\headeright}{PROGETTO E ATTIVITÀ PROGETTUALE SISTEMI DIGITALI M}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyheadoffset{0pt}
+\fancyhead[R]{Overleaf}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\fancyfoot[R]{Luigi di Nuzzo - Daniele Foschi - Filippo Veronesi}
+\rhead{\scshape \footnotesize \headeright}
+\chead{\shorttitle}
+
+
+
+
+
+
+\clearpage
+\null
+\thispagestyle{empty}
+\clearpage
 
 \newpage
 
-\clearpage
 
-\null
 
-\clearpage
+
+
+
+
+\cleardoublepage
+
+
 
 \newpage
 
@@ -76,8 +189,11 @@ Alma Mater Studiorum - Università di Bologna\\
 \newpage
 
 
+\listoffigures
 
 
+
+\newpage
 
 
 \newpage
@@ -140,35 +256,50 @@ e pronto all’uso, che poi è stato convertito in un formato adatto ai sistemi 
 
 \newpage
 \section{Progetto Android}
-\label{sec:others}
-
-\subsection{Nerd Mode}
-Citations use \verb+natbib+. The documentation may be found at
-\begin{center}
-	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
-
-Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, hadash2018estimate} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
-
-\subsection{Calibration}
-\lipsum[10]
-See Figure \ref{fig:fig1}. Here is how you add footnotes. \footnote{Sample of the first footnote.}
-\lipsum[11]
-
-\begin{figure}
-	\centering
-	\fbox{\rule[-.5cm]{4cm}{4cm} \rule[-.5cm]{4cm}{0cm}}
-	\caption{Sample figure caption.}
-	\label{fig:fig1}
+L'applicazione Android una volta avviata presenta la seguente interfaccia:
+\begin{figure}[h]
+\caption{Homepage App }
+\centering
+\includegraphics[scale=0.2]{img/home.png}
 \end{figure}
 
-\subsection{Game}
-See awesome Table~\ref{tab:table}.
+Sono da segnalare i 3 principali bottoni dell'applicazione:
+\begin{itemize}
+\item Nerd Mode in alto a destra;
+\item Calibration in alto a sinistra;
+\item Play Game al centro dello schermo.
+\end{itemize}
 
-The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is available from:
-\begin{center}
-	\url{https://www.ctan.org/pkg/booktabs}
-\end{center}
+\subsection{Nerd Mode}
+Modalità la cui utilità è quella di individuare real time gli occhi della persona, in particolare permette di vedere i boxes creati dalla rete neruale attorno agli occhi dell'utente.
+\\Interfaccia che presenta diversi bottoni:
+\begin{itemize}
+    \item Preview che permette di avviare la propria fotocamera frontale o esterna;
+    \item Analyze che permette appunto la visualizzazione dei boxes creati dalla rete neurale in real time.
+    \item Fotocamera frontale/esterna per cambiare da una fotocamera all'altra.
+\end{itemize}
+\subsubsection{Bottone Analyze}
+
+
+\subsection{Calibration}
+Modalità usata per calibrare al meglio la fotocamera e ottenere risultati i più veritieri possibili. Qui di sotto la sua schermata.
+
+
+\begin{figure}[h]
+\caption{Schermata Calibration }
+\centering
+\includegraphics[scale=0.2]{img/calibration.png}
+\end{figure}
+
+
+\newpage
+\subsection{Game}
+Modalità usata per completare un mini-gioco sfruttando le potenzialità della rete neurale sottostante. Tramite un mini gioco Quiz infatti, l'utente può rispondere alle domande del Quiz semplicemente spostando lo sguardo sulle possibili risposte e soffermandosi il più tempo possibile sulla sua scelta. I dati delle domande e delle risposte sono state recuperate da uno dei tanti servizi di Api pubblici che si trovano in rete: tramite appunto una richiesta Url, vengono ricevuti i dati casuali in formato JSON per una singola domanda, e una volta ricevuta la risposta, corretta o sbagliata che sia, viene generata un'altra richiesta in modo tale da poter continuare il mini gioco. 
+\begin{figure}[h]
+	\centering
+	\caption{Schermata Game}
+	\includegraphics[scale=0.2]{img/game.png}
+\end{figure}
 
 
 
@@ -187,9 +318,7 @@ in Android risultano con prestazione adeguate.
 \newline \newline
 Il modello addestrato restituisce un output corretto la maggior parte delle volte con una precisione di eye tracking del 95\%.
 
-\newpage
-\bibliographystyle{unsrtnat}
-\bibliography{references}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
+
 
 
 
