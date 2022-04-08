@@ -21,6 +21,7 @@
     <string name="analyze_image_button_start">Analyze</string>
     <string name="analyze_image_button_stop">Stop</string>
     <string name="analyze_image_description">Analyzed image</string>
+    <string name="analyze_image_switch_camera">Switch camera</string>
 
     <string name="game_question_default"> </string>
     <string name="game_a_answer_default">aaa</string>

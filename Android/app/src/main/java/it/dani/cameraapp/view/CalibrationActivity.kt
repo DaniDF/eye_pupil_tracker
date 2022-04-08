@@ -129,10 +129,10 @@ class CalibrationActivity : AppCompatActivity() {
         this.animationThread = this.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tl)))
 
         EyeMotionDetector(analyzer).apply {
-            var eyesLeft : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
-            var eyesRight : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
-            var eyesUp : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
-            var eyesDown : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
+            var eyesLeft : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
+            var eyesRight : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
+            var eyesUp : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
+            var eyesDown : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
 
             eyesRight = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()

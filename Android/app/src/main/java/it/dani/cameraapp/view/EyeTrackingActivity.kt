@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -17,11 +18,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.mlkit.vision.objects.DetectedObject
 import it.dani.cameraapp.R
-import it.dani.cameraapp.camera.CameraManager
-import it.dani.cameraapp.camera.EyeTrackingDetector
-import it.dani.cameraapp.camera.ObjectDetection
+import it.dani.cameraapp.camera.*
+import it.dani.cameraapp.mock.EyeTrackingDetectorMock
 import it.dani.cameraapp.view.utils.PermissionUtils
 import java.lang.StringBuilder
 import java.util.concurrent.Executors
@@ -105,14 +104,14 @@ class EyeTrackingActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val adjustFrontFunc = { rect : Rect -> Rect(previewView.width - rect.left,rect.top,previewView.width - rect.right,rect.bottom) }
-        val adjustDflFunc = { rect : Rect -> rect}
+        val adjustFrontFunc = { boundingBox : BoundingBox -> BoundingBox(1.0f - boundingBox.left, boundingBox.top,1.0f - boundingBox.right,boundingBox.bottom) }
+        val adjustDflFunc = { boundingBox : BoundingBox -> boundingBox }
         var adjustFunc = when(cameraSelected) {
             CameraSelector.LENS_FACING_FRONT -> adjustFrontFunc
             else -> adjustDflFunc
         }
 
-        val analyzer : ObjectDetection = EyeTrackingDetector().apply {
+        val analyzer : ObjectDetection = EyeTrackingDetectorMock().apply {
             onSuccess += {
                 val objs = StringBuilder()
                 it.forEach { o ->
@@ -123,6 +122,23 @@ class EyeTrackingActivity : AppCompatActivity() {
                     this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc)
                 }
             }
+
+            var giveImageHandler : (Int,Int) -> Unit = {_,_->}
+            giveImageHandler = { x,y ->
+                runOnUiThread {
+                    findViewById<View>(R.id.analyze_view).apply {
+                        val params = layoutParams as ConstraintLayout.LayoutParams
+                        val w = 1111    //TODO trova il modo di metterci il valore di width di eye_tracking_view
+                        params.height = (((y * 1.0f) / x) * w).toInt()
+                        layoutParams = params
+                    }
+                }
+
+                onGiveImageSize -= giveImageHandler
+                Log.i("View","Correctly resized analyze view, handler deleted")
+            }
+
+            onGiveImageSize += giveImageHandler
         }
 
         findViewById<Button>(R.id.preview_button).apply {
@@ -213,7 +229,7 @@ class EyeTrackingActivity : AppCompatActivity() {
      * @param[objs] A list of detected objects
      * @param[adjustFunc] A function for mirroring the result is currently used camera is front camera
      */
-    private fun manageAnalyzedObjs(objs : List<DetectedObject>, adjustFunc : (Rect) -> Rect) {
+    private fun manageAnalyzedObjs(objs : List<DetectedObject>, adjustFunc : (BoundingBox) -> BoundingBox) {
         val analyzeView = findViewById<ConstraintLayout>(R.id.analyze_view).apply { removeAllViews() }
         val textLabelView = findViewById<LinearLayout>(R.id.text_label_view).apply { removeAllViews() }
 
@@ -230,13 +246,19 @@ class EyeTrackingActivity : AppCompatActivity() {
                 val bitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
 
                 val canvas = Canvas(bitmap)
-                val rectF = adjustFunc(obj.boundingBox)
+                val boundingBox = adjustFunc(obj.boundingBox)
+
+                val rectF = Rect((boundingBox.left * canvas.width).toInt(),
+                    (boundingBox.top * canvas.height).toInt(),
+                    (boundingBox.right * canvas.width).toInt(),
+                    (boundingBox.bottom * canvas.height).toInt())
+
                 canvas.drawRect(rectF,Paint().apply {
                     color = this@EyeTrackingActivity.getAnalyzeColor(count)
                     style = Paint.Style.STROKE
                 })
 
-                val imageView = ImageView(this@EyeTrackingActivity,).apply {
+                val imageView = ImageView(this@EyeTrackingActivity).apply {
                     setImageBitmap(bitmap)
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,

@@ -1,7 +1,7 @@
 package it.dani.cameraapp.motion
 
 import android.util.Log
-import com.google.mlkit.vision.objects.DetectedObject
+import it.dani.cameraapp.camera.DetectedObject
 import it.dani.cameraapp.camera.ObjectDetection
 
 /**
@@ -17,32 +17,32 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
     /**
      * @property[onEyeLeft] List of handler fired when eyes move to left
      */
-    val onEyeLeft : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
+    val onEyeLeft : MutableList<(Pair<Float,Float>,Pair<Float,Float>) -> Any> = ArrayList()
 
     /**
      * @property[onEyeRight] List of handler fired when eyes move to right
      */
-    val onEyeRight : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
+    val onEyeRight : MutableList<(Pair<Float,Float>,Pair<Float,Float>) -> Any> = ArrayList()
 
     /**
      * @property[onEyeUp] List of handler fired when eyes move to up
      */
-    val onEyeUp : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
+    val onEyeUp : MutableList<(Pair<Float,Float>,Pair<Float,Float>) -> Any> = ArrayList()
 
     /**
      * @property[onEyeDown] List of handler fired when eyes move to down
      */
-    val onEyeDown : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
+    val onEyeDown : MutableList<(Pair<Float,Float>,Pair<Float,Float>) -> Any> = ArrayList()
 
     /**
      * @property[leftEye] Position of last detected left eye
      */
-    private lateinit var leftEye : Pair<Int,Int>
+    private lateinit var leftEye : Pair<Float,Float>
 
     /**
      * @property[rightEye] Position of last detected right eye
      */
-    private lateinit var rightEye : Pair<Int,Int>
+    private lateinit var rightEye : Pair<Float,Float>
 
     init {
         objectDetection.onSuccess += {
@@ -68,7 +68,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
         }
     }
 
-    private fun detectMotion(prevLeftEye : Pair<Int,Int>, leftEye : Pair<Int,Int>, prevRightEye : Pair<Int,Int>, rightEye : Pair<Int,Int>) {
+    private fun detectMotion(prevLeftEye : Pair<Float,Float>, leftEye : Pair<Float,Float>, prevRightEye : Pair<Float,Float>, rightEye : Pair<Float,Float>) {
         if(prevLeftEye.first + RADIUS < leftEye.first && prevRightEye.first + RADIUS < rightEye.first) {
             this.onEyeRight.forEach { it(leftEye,rightEye) }
         }
@@ -91,7 +91,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
      *
      * @param[eyes] A list of detected eyes
      */
-    private fun findLeftEye(eyes : List<DetectedObject>) : Pair<Int,Int> {
+    private fun findLeftEye(eyes : List<DetectedObject>) : Pair<Float,Float> {
         if(eyes.isEmpty()) {
             throw IllegalEyeDetectionException("Error: no eye provided")
         }
@@ -111,7 +111,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
      *
      * @param[eyes] A list of detected eyes
      */
-    private fun findRightEye(eyes : List<DetectedObject>) : Pair<Int,Int> {
+    private fun findRightEye(eyes : List<DetectedObject>) : Pair<Float,Float> {
         if(eyes.isEmpty()) {
             throw IllegalEyeDetectionException("Error: no eye provided")
         }
@@ -131,6 +131,6 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
         /**
          * @property[RADIUS] The confidence interval for a movement
          */
-        private const val RADIUS = 50  //TODO
+        private const val RADIUS = 0.05f
     }
 }

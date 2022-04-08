@@ -1,14 +1,14 @@
 package it.dani.cameraapp.mock
 
-import android.graphics.Rect
 import androidx.camera.core.ImageProxy
-import com.google.mlkit.vision.objects.DetectedObject
+import it.dani.cameraapp.camera.BoundingBox
+import it.dani.cameraapp.camera.DetectedObject
 import it.dani.cameraapp.camera.ObjectDetection
 
 /**
  * @author Daniele
  *
- * This class emulates the behavior of [EyeTrackingDetector] (only for testing), simulates a sequence of eye movements
+ * This class emulates the behavior of [it.dani.cameraapp.camera.EyeTrackingDetector] (only for testing), simulates a sequence of eye movements
  */
 class EyeTrackingDetectorMock : ObjectDetection() {
 
@@ -32,26 +32,26 @@ class EyeTrackingDetectorMock : ObjectDetection() {
         if(System.currentTimeMillis() - this.oldTime > 5000) {
             this.oldTime = System.currentTimeMillis()
 
-            val rectL = Rect().apply {
-                left = POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first
-                top = POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second
-                right = left + BOX_WIDTH
-                bottom = top + BOX_HEIGHT
-            }
+            val boundingBoxL = BoundingBox(
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first,
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second,
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH,
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second + BOX_HEIGHT
+            )
             val detectedObjectL = DetectedObject(
-                rectL,
-                this.currentPosition, mutableListOf(DetectedObject.Label("Eye L Mock",1f,1))
+                boundingBoxL,
+                this.currentPosition, mutableListOf(com.google.mlkit.vision.objects.DetectedObject.Label("Eye L Mock",1f,1))
             )
 
-            val rectR = Rect().apply {
-                left = POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH
-                top = POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second
-                right = left + BOX_WIDTH + BOX_WIDTH
-                bottom = top + BOX_HEIGHT
-            }
+            val boundingBoxR = BoundingBox(
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH,
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second,
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH + BOX_WIDTH,
+                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second + BOX_HEIGHT
+            )
             val detectedObjectR = DetectedObject(
-                rectR,
-                this.currentPosition, mutableListOf(DetectedObject.Label("Eye R Mock",1f,1))
+                boundingBoxR,
+                this.currentPosition, mutableListOf(com.google.mlkit.vision.objects.DetectedObject.Label("Eye R Mock",1f,1))
             )
 
             if(this.currentPosition+1 < POSITIONS.size) {
@@ -61,6 +61,7 @@ class EyeTrackingDetectorMock : ObjectDetection() {
             }
 
             super.onSuccess.forEach { it(listOf(detectedObjectL,detectedObjectR)) }
+            super.onGiveImageSize.forEach { it(image.width,image.height) }
         }
 
         image.close()
@@ -70,16 +71,16 @@ class EyeTrackingDetectorMock : ObjectDetection() {
         /**
          * @property[BOX_WIDTH] The bounding box width
          */
-        private const val BOX_WIDTH = 100
+        private const val BOX_WIDTH = 0.125f
 
         /**
          * @property[BOX_HEIGHT] The bounding box height
          */
-        private const val BOX_HEIGHT = 100
+        private const val BOX_HEIGHT = 0.125f
 
         /**
          * @property[POSITIONS] The list of fake movements
          */
-        private val POSITIONS = listOf(50 to 50, 400 to 50, 400 to 400, 50 to 400)
+        private val POSITIONS = listOf(0.0f to 0.0f, 1.0f - BOX_WIDTH*2 to 0.0f, 1.0f - BOX_WIDTH*2 to 1.0f - BOX_HEIGHT, 0.0f to 1.0f - BOX_HEIGHT)
     }
 }

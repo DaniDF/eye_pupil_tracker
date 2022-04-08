@@ -10,15 +10,14 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="3:4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:scaleType="fitCenter">
+        app:scaleType="fitStart">
 
     </androidx.camera.view.PreviewView>
 
@@ -26,24 +25,14 @@
         android:id="@+id/analyze_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="0dp"
         android:layout_margin="0dp"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
-    <!--
-    <ImageView
-        android:id="@+id/analyze_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#40A00000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    -->
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/preview_button"
@@ -81,6 +70,7 @@
         android:text="@string/analyze_image_button_start"
         android:backgroundTint="?attr/colorPrimary"
         android:textColor="?attr/colorOnPrimary"
+        android:contentDescription="@string/analyze_image_switch_camera"
         app:tint="?attr/colorOnPrimary"
         app:srcCompat="@drawable/ic_cameraswitch"
         app:layout_constraintBottom_toBottomOf="parent"

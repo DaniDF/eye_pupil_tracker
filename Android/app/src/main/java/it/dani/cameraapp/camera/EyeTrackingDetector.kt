@@ -54,7 +54,17 @@ class EyeTrackingDetector : ObjectDetection() {
                 }
                 addOnSuccessListener { l ->
                     Log.d("ANALYZER","Found: something [objects: ${l.size}]")
-                    this@EyeTrackingDetector.onSuccess.forEach { it(l) }
+
+                    val detectedObjects : MutableList<DetectedObject> = ArrayList()
+                    l.forEachIndexed { i,b ->
+                        val boundingBox = BoundingBox((b.boundingBox.left*1.0f)/image.width,
+                            (b.boundingBox.top*1.0f)/image.height,
+                            (b.boundingBox.right*1.0f)/image.width,
+                            (b.boundingBox.bottom*1.0f)/image.height)
+                        detectedObjects += DetectedObject(boundingBox,b.trackingId ?: i,b.labels)
+                    }
+                    this@EyeTrackingDetector.onSuccess.forEach { it(detectedObjects) }
+                    this@EyeTrackingDetector.onGiveImageSize.forEach { it(image.width,image.height) }
                 }
                 addOnCompleteListener {
                     img.close()
