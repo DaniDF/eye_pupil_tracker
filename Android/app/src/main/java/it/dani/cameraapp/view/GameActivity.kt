@@ -1,15 +1,26 @@
 package it.dani.cameraapp.view
 
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import it.dani.cameraapp.R
+import it.dani.cameraapp.camera.CameraManager
+import it.dani.cameraapp.camera.ObjectDetection
 import it.dani.cameraapp.game.Question
 import it.dani.cameraapp.game.QuestionDB
 import it.dani.cameraapp.game.QuestionFetcher
+import it.dani.cameraapp.mock.EyeTrackingDetectorMock
+import it.dani.cameraapp.motion.EyeMotionDetector
+import it.dani.cameraapp.view.utils.PermissionUtils
 import it.dani.cameraapp.view.utils.ViewUtils
 import java.util.concurrent.Executors
 
@@ -20,6 +31,7 @@ class GameActivity : AppCompatActivity() {
     private var index = 0
     private lateinit var questionDB : QuestionDB
     private lateinit var buttons : List<ExtendedFloatingActionButton>
+    private var beenAskedPermission = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +59,15 @@ class GameActivity : AppCompatActivity() {
         }
 
         this.questionFetcher.fetch()
+
+        if(!PermissionUtils.permissionGranted(this, arrayOf(Manifest.permission.CAMERA))) {
+            if(!this.beenAskedPermission) {
+                this.beenAskedPermission = true
+                ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.CAMERA),0xA1)
+            }
+        } else {
+            CameraManager.provideCamera(this,this::bindCameraCases)
+        }
     }
 
     private fun displayGame(questions : QuestionDB, index : Int) {
@@ -102,5 +123,28 @@ class GameActivity : AppCompatActivity() {
 
             } catch (e : InterruptedException) {}
         }
+    }
+
+    private fun bindCameraCases(cameraProvider : ProcessCameraProvider) {
+        val cameraSelected = CameraSelector.LENS_FACING_FRONT
+
+        val cameraSelector = CameraSelector.Builder()
+            .requireLensFacing(cameraSelected)
+            .build()
+
+        val analysis = ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+
+        val analyzer : ObjectDetection = EyeTrackingDetectorMock()
+
+        EyeMotionDetector(analyzer).apply {
+            //TODO
+        }
+
+        analysis.setAnalyzer(Executors.newSingleThreadExecutor(),analyzer)
+
+        cameraProvider.unbindAll()
+        cameraProvider.bindToLifecycle(this as LifecycleOwner,cameraSelector,analysis)
     }
 }

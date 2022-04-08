@@ -15,16 +15,16 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.mlkit.vision.objects.DetectedObject
 import it.dani.cameraapp.R
+import it.dani.cameraapp.camera.CameraManager
 import it.dani.cameraapp.camera.EyeTrackingDetector
 import it.dani.cameraapp.camera.ObjectDetection
 import it.dani.cameraapp.view.utils.PermissionUtils
 import java.lang.StringBuilder
+import java.util.concurrent.Executors
 
 /**
  * @author Daniele
@@ -53,7 +53,7 @@ class EyeTrackingActivity : AppCompatActivity() {
                 ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.CAMERA),0xA1)
             }
         } else {
-            this.provideCamera()
+            CameraManager.provideCamera(this,this::bindPreview)
         }
     }
 
@@ -74,22 +74,12 @@ class EyeTrackingActivity : AppCompatActivity() {
                 }
 
                 if(flagOK) {
-                    this.provideCamera()
+                    CameraManager.provideCamera(this,this::bindPreview)
                 } else {
                     Toast.makeText(this, R.string.permission_camera_denied, Toast.LENGTH_SHORT).show()
                 }
             }
         }
-    }
-
-    /**
-     * This method attach listeners to camera
-     */
-    private fun provideCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            this.bindPreview(cameraProviderFuture.get())
-        }, ContextCompat.getMainExecutor(this))
     }
 
     /**
@@ -122,8 +112,17 @@ class EyeTrackingActivity : AppCompatActivity() {
             else -> adjustDflFunc
         }
 
-        val analyzer : ObjectDetection = EyeTrackingDetector(this).apply {
-            onSuccess += { this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc) }
+        val analyzer : ObjectDetection = EyeTrackingDetector().apply {
+            onSuccess += {
+                val objs = StringBuilder()
+                it.forEach { o ->
+                    objs.append(", ${o.boundingBox}")
+                }
+                Log.d("Boxes","[$objs]")
+                runOnUiThread {
+                    this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc)
+                }
+            }
         }
 
         findViewById<Button>(R.id.preview_button).apply {
@@ -193,7 +192,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             }
         }
 
-        analysis.setAnalyzer({ Thread(it).start() },analyzer)
+        analysis.setAnalyzer(Executors.newSingleThreadExecutor(),analyzer)
 
         cameraProvider.unbindAll()
     }

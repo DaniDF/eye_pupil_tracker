@@ -2,7 +2,6 @@ package it.dani.cameraapp.camera
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
@@ -14,7 +13,7 @@ import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
  * This class extends [ObjectDetection], is dedicated to detect eye on an image
  */
 
-class EyeTrackingDetector(private val context: AppCompatActivity) : ObjectDetection() {
+class EyeTrackingDetector : ObjectDetection() {
 
     /**
      * @property[localModel] The Tensorflow lite model used for detections
@@ -55,9 +54,7 @@ class EyeTrackingDetector(private val context: AppCompatActivity) : ObjectDetect
                 }
                 addOnSuccessListener { l ->
                     Log.d("ANALYZER","Found: something [objects: ${l.size}]")
-                    this@EyeTrackingDetector.context.runOnUiThread {
-                        this@EyeTrackingDetector.onSuccess.forEach { it(l) }
-                    }
+                    this@EyeTrackingDetector.onSuccess.forEach { it(l) }
                 }
                 addOnCompleteListener {
                     img.close()

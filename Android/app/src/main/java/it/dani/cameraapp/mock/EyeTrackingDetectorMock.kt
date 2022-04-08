@@ -1,7 +1,6 @@
 package it.dani.cameraapp.mock
 
 import android.graphics.Rect
-import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.objects.DetectedObject
 import it.dani.cameraapp.camera.ObjectDetection
@@ -11,7 +10,7 @@ import it.dani.cameraapp.camera.ObjectDetection
  *
  * This class emulates the behavior of [EyeTrackingDetector] (only for testing), simulates a sequence of eye movements
  */
-class EyeTrackingDetectorMock(context : AppCompatActivity) : ObjectDetection() {
+class EyeTrackingDetectorMock : ObjectDetection() {
 
     /**
      * @property[currentPosition] The fake current eye position on the list of emulated movements

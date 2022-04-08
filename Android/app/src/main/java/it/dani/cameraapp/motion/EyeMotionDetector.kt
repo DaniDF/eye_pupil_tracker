@@ -17,22 +17,22 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
     /**
      * @property[onEyeLeft] List of handler fired when eyes move to left
      */
-    val onEyeLeft : MutableList<() -> Any> = ArrayList()
+    val onEyeLeft : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
 
     /**
      * @property[onEyeRight] List of handler fired when eyes move to right
      */
-    val onEyeRight : MutableList<() -> Any> = ArrayList()
+    val onEyeRight : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
 
     /**
      * @property[onEyeUp] List of handler fired when eyes move to up
      */
-    val onEyeUp : MutableList<() -> Any> = ArrayList()
+    val onEyeUp : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
 
     /**
      * @property[onEyeDown] List of handler fired when eyes move to down
      */
-    val onEyeDown : MutableList<() -> Any> = ArrayList()
+    val onEyeDown : MutableList<(Pair<Int,Int>,Pair<Int,Int>) -> Any> = ArrayList()
 
     /**
      * @property[leftEye] Position of last detected left eye
@@ -70,19 +70,19 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
 
     private fun detectMotion(prevLeftEye : Pair<Int,Int>, leftEye : Pair<Int,Int>, prevRightEye : Pair<Int,Int>, rightEye : Pair<Int,Int>) {
         if(prevLeftEye.first + RADIUS < leftEye.first && prevRightEye.first + RADIUS < rightEye.first) {
-            this.onEyeRight.forEach { it() }
+            this.onEyeRight.forEach { it(leftEye,rightEye) }
         }
 
         if(prevLeftEye.first + RADIUS > leftEye.first && prevRightEye.first + RADIUS > rightEye.first) {
-            this.onEyeLeft.forEach { it() }
+            this.onEyeLeft.forEach { it(leftEye,rightEye) }
         }
 
         if(prevLeftEye.second + RADIUS < leftEye.second && prevRightEye.second + RADIUS < rightEye.second) {
-            this.onEyeDown.forEach { it() }
+            this.onEyeDown.forEach { it(leftEye,rightEye) }
         }
 
         if(prevLeftEye.second + RADIUS > leftEye.second && prevRightEye.second + RADIUS > rightEye.second) {
-            this.onEyeUp.forEach { it() }
+            this.onEyeUp.forEach { it(leftEye,rightEye) }
         }
     }
 

@@ -32,8 +32,8 @@ android {
     buildFeatures {
         mlModelBinding true
     }
-    aaptOptions {
-        noCompress "tflite"
+    androidResources {
+        noCompress 'tflite'
     }
 }
 

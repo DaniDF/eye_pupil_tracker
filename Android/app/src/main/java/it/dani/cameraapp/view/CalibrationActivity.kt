@@ -12,9 +12,9 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import it.dani.cameraapp.R
+import it.dani.cameraapp.camera.CameraManager
 import it.dani.cameraapp.camera.ObjectDetection
 import it.dani.cameraapp.mock.EyeTrackingDetectorMock
 import it.dani.cameraapp.motion.EyeMotionDetector
@@ -70,7 +70,7 @@ class CalibrationActivity : AppCompatActivity() {
                 ActivityCompat.requestPermissions(this,arrayOf(Manifest.permission.CAMERA),0xA1)
             }
         } else {
-            this.provideCamera()
+            CameraManager.provideCamera(this,this::bindCameraCases)
         }
     }
 
@@ -79,7 +79,7 @@ class CalibrationActivity : AppCompatActivity() {
         if(this::animationThread.isInitialized) {
             this.animationThread.shutdownNow()
         }
-        this.undoCamera()
+        CameraManager.undoCamera(this)
     }
 
     override fun onRequestPermissionsResult(
@@ -99,31 +99,12 @@ class CalibrationActivity : AppCompatActivity() {
                 }
 
                 if(flagOK) {
-                    this.provideCamera()
+                    CameraManager.provideCamera(this,this::bindCameraCases)
                 } else {
                     Toast.makeText(this,R.string.permission_camera_denied,Toast.LENGTH_SHORT).show()
                 }
             }
         }
-    }
-
-    /**
-     * This method attach listeners to camera
-     */
-    private fun provideCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            this.bindCameraCases(cameraProviderFuture.get())
-        }, ContextCompat.getMainExecutor(this))
-    }
-
-    /**
-     * This method remove all camera uses and close the camera
-     */
-    private fun undoCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.get().unbindAll()
-        cameraProviderFuture.cancel(true)
     }
 
     /**
@@ -143,43 +124,43 @@ class CalibrationActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val analyzer : ObjectDetection = EyeTrackingDetectorMock(this)
+        val analyzer : ObjectDetection = EyeTrackingDetectorMock()
 
         this.animationThread = this.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tl)))
 
         EyeMotionDetector(analyzer).apply {
-            var eyeLeft : () -> Unit = {}
-            var eyeRight : () -> Unit = {}
-            var eyeUp : () -> Unit = {}
-            var eyeDown : () -> Unit = {}
+            var eyesLeft : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
+            var eyesRight : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
+            var eyesUp : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
+            var eyesDown : (Pair<Int,Int>,Pair<Int,Int>) -> Unit = {_,_->}
 
-            eyeRight = {
+            eyesRight = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tr)))
-                onEyeRight -= eyeRight
+                onEyeRight -= eyesRight
             }
-            eyeDown = {
+            eyesDown = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_br)))
-                onEyeDown -= eyeDown
+                onEyeDown -= eyesDown
             }
-            eyeLeft = {
+            eyesLeft = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_bl)))
-                onEyeLeft -= eyeLeft
+                onEyeLeft -= eyesLeft
             }
-            eyeUp = {
+            eyesUp = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
-                onEyeUp -= eyeUp
+                onEyeUp -= eyesUp
             }
 
-            onEyeLeft += eyeLeft
-            onEyeRight += eyeRight
-            onEyeUp += eyeUp
-            onEyeDown += eyeDown
+            onEyeLeft += eyesLeft
+            onEyeRight += eyesRight
+            onEyeUp += eyesUp
+            onEyeDown += eyesDown
         }
 
-        analysis.setAnalyzer({ Thread(it).start() },analyzer)
+        analysis.setAnalyzer(Executors.newSingleThreadExecutor(),analyzer)
 
         cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(this as LifecycleOwner,cameraSelector,analysis)
