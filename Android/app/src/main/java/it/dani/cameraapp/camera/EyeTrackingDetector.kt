@@ -64,7 +64,7 @@ class EyeTrackingDetector : ObjectDetection() {
                         detectedObjects += DetectedObject(boundingBox,b.trackingId ?: i,b.labels)
                     }
                     this@EyeTrackingDetector.onSuccess.forEach { it(detectedObjects) }
-                    this@EyeTrackingDetector.onGiveImageSize.forEach { it(image.width,image.height) }
+                    this@EyeTrackingDetector.onGiveImageSize.forEach { it(inputImage.width,inputImage.height) }
                 }
                 addOnCompleteListener {
                     img.close()

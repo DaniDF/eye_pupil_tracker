@@ -1,6 +1,8 @@
 package it.dani.cameraapp.mock
 
+import android.annotation.SuppressLint
 import androidx.camera.core.ImageProxy
+import com.google.mlkit.vision.common.InputImage
 import it.dani.cameraapp.camera.BoundingBox
 import it.dani.cameraapp.camera.DetectedObject
 import it.dani.cameraapp.camera.ObjectDetection
@@ -27,6 +29,7 @@ class EyeTrackingDetectorMock : ObjectDetection() {
      *
      * @param[image] The image proxy, unused for this fake detection
      */
+    @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(image: ImageProxy) {
 
         if(System.currentTimeMillis() - this.oldTime > 5000) {
@@ -51,7 +54,7 @@ class EyeTrackingDetectorMock : ObjectDetection() {
             )
             val detectedObjectR = DetectedObject(
                 boundingBoxR,
-                this.currentPosition, mutableListOf(com.google.mlkit.vision.objects.DetectedObject.Label("Eye R Mock",1f,1))
+                this.currentPosition, mutableListOf(com.google.mlkit.vision.objects.DetectedObject.Label("Eye R Mock",1f,2))
             )
 
             if(this.currentPosition+1 < POSITIONS.size) {
@@ -61,7 +64,11 @@ class EyeTrackingDetectorMock : ObjectDetection() {
             }
 
             super.onSuccess.forEach { it(listOf(detectedObjectL,detectedObjectR)) }
-            super.onGiveImageSize.forEach { it(image.width,image.height) }
+
+            image.image?.let {
+                val inputImage = InputImage.fromMediaImage(it,image.imageInfo.rotationDegrees)
+                super.onGiveImageSize.forEach { it(inputImage.width,inputImage.height) }
+            }
         }
 
         image.close()

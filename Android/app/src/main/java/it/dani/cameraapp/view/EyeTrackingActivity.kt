@@ -20,7 +20,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.*
-import it.dani.cameraapp.mock.EyeTrackingDetectorMock
 import it.dani.cameraapp.view.utils.PermissionUtils
 import java.lang.StringBuilder
 import java.util.concurrent.Executors
@@ -111,34 +110,35 @@ class EyeTrackingActivity : AppCompatActivity() {
             else -> adjustDflFunc
         }
 
-        val analyzer : ObjectDetection = EyeTrackingDetectorMock().apply {
+        val analyzer : ObjectDetection = EyeTrackingDetector().apply {
             onSuccess += {
-                val objs = StringBuilder()
-                it.forEach { o ->
-                    objs.append(", ${o.boundingBox}")
-                }
-                Log.d("Boxes","[$objs]")
                 runOnUiThread {
                     this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc)
                 }
             }
 
-            var giveImageHandler : (Int,Int) -> Unit = {_,_->}
-            giveImageHandler = { x,y ->
-                runOnUiThread {
-                    findViewById<View>(R.id.analyze_view).apply {
-                        val params = layoutParams as ConstraintLayout.LayoutParams
-                        val w = 1111    //TODO trova il modo di metterci il valore di width di eye_tracking_view
-                        params.height = (((y * 1.0f) / x) * w).toInt()
-                        layoutParams = params
+            var handler : (Int,Int) -> Unit = {_,_->}
+            handler = { x,y ->
+                findViewById<View>(R.id.eye_tracking_view).also {
+                    var handlerView = {}
+                    handlerView = {
+                        findViewById<View>(R.id.analyze_view).apply {
+                            val params = layoutParams as ConstraintLayout.LayoutParams
+                            val screenWidth = it.measuredWidth
+                            val height = x.max(y)
+                            val width = x.min(y)
+                            params.height = (((height * 1.0f) / width) * screenWidth).toInt()
+                            layoutParams = params
+                        }
+                        it.viewTreeObserver.removeOnGlobalLayoutListener(handlerView)
+                        //Log.i("View","Correctly resized analyze view, handler deleted")
+                        //TODO l'handler non viene mai rimosso e viene invocato sempre possibile memory leak
                     }
+                    it.viewTreeObserver.addOnGlobalLayoutListener(handlerView)
                 }
-
-                onGiveImageSize -= giveImageHandler
-                Log.i("View","Correctly resized analyze view, handler deleted")
+                onGiveImageSize -= handler
             }
-
-            onGiveImageSize += giveImageHandler
+            onGiveImageSize += handler
         }
 
         findViewById<Button>(R.id.preview_button).apply {
@@ -236,7 +236,7 @@ class EyeTrackingActivity : AppCompatActivity() {
         var count = 0
         objs.forEach { obj ->
 
-            Log.d("Detected_OBJ", this.stringObj(obj))
+            Log.d("Detected_OBJ", obj.stringObjs())
 
             if(count++ < 5) {
 
@@ -290,7 +290,23 @@ class EyeTrackingActivity : AppCompatActivity() {
         }
     }
 
-    private fun stringObj(objs: DetectedObject) : String {
-        return "id[${objs.trackingId}] labels[${objs.labels.map { "${it.index},${it.text},${it.confidence}" }}] ${objs.boundingBox}"
+    private fun DetectedObject.stringObjs() : String {
+        return "id[${this.trackingId}] labels[${this.labels.map { "${it.index},${it.text},${it.confidence}" }}] ${this.boundingBox}"
+    }
+
+    private fun Int.max(o : Int) : Int {
+        return if(this >= o) {
+            this
+        } else {
+            o
+        }
+    }
+
+    private fun Int.min(o : Int) : Int {
+        return if(this <= o) {
+            this
+        } else {
+            o
+        }
     }
 }
