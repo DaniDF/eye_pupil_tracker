@@ -1,24 +1,29 @@
 package it.dani.cameraapp.view
 
 import android.Manifest
+import android.graphics.*
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.CameraManager
+import it.dani.cameraapp.camera.EyeTrackingDetector
 import it.dani.cameraapp.camera.ObjectDetection
 import it.dani.cameraapp.game.Question
 import it.dani.cameraapp.game.QuestionDB
 import it.dani.cameraapp.game.QuestionFetcher
-import it.dani.cameraapp.mock.EyeTrackingDetectorMock
 import it.dani.cameraapp.motion.EyeMotionDetector
 import it.dani.cameraapp.view.utils.PermissionUtils
 import it.dani.cameraapp.view.utils.ViewUtils
@@ -136,15 +141,63 @@ class GameActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val analyzer : ObjectDetection = EyeTrackingDetectorMock()
+        val analyzer : ObjectDetection = EyeTrackingDetector()
 
         EyeMotionDetector(analyzer).apply {
-            //TODO
+            val handler : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = { l,_ ->
+                val x = 1.0f - l.first
+                val y = 1.0f - l.second
+
+                Log.i("Game_cursor","x = $x, y = $y")
+
+                runOnUiThread {
+                    when {
+                        x <= 0.30 && y <= 0.30 -> this@GameActivity.buttons[0].callOnClick()
+                        x >= 0.70 && y <= 0.30 -> this@GameActivity.buttons[1].callOnClick()
+                        x <= 0.30 && y >= 0.70 -> this@GameActivity.buttons[2].callOnClick()
+                        x >= 0.70 && y >= 0.70 -> this@GameActivity.buttons[3].callOnClick()
+                    }
+                }
+
+                val analyzeView = findViewById<ConstraintLayout>(R.id.analyze_view)
+                val width = analyzeView.width
+                val height = analyzeView.height
+
+                val bitmap = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888)
+
+                val canvas = Canvas(bitmap)
+
+                canvas.drawCircle(x * width - DOT_RADIUS,y * height - DOT_RADIUS, DOT_RADIUS, Paint().apply {
+                    color = Color.RED
+                })
+
+                val imageView = ImageView(this@GameActivity).apply {
+                    setImageBitmap(bitmap)
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                }
+
+                runOnUiThread {
+                    analyzeView.removeAllViews()
+                    analyzeView.addView(imageView)
+                }
+            }
+
+            onEyeLeft += handler
+            onEyeRight += handler
+            onEyeUp += handler
+            onEyeDown += handler
         }
 
         analysis.setAnalyzer(Executors.newSingleThreadExecutor(),analyzer)
 
         cameraProvider.unbindAll()
         cameraProvider.bindToLifecycle(this as LifecycleOwner,cameraSelector,analysis)
+    }
+
+    companion object {
+        private const val DOT_RADIUS = 100f
     }
 }

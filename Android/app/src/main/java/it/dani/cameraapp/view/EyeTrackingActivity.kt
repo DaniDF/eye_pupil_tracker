@@ -17,6 +17,7 @@ import androidx.camera.view.PreviewView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.*
@@ -45,6 +46,14 @@ class EyeTrackingActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        findViewById<ExtendedFloatingActionButton>(R.id.preview_button).apply {
+            text = this@EyeTrackingActivity.resources.getString(R.string.preview_image_button_start)
+        }
+
+        findViewById<ExtendedFloatingActionButton>(R.id.analyze_button).apply {
+            text = this@EyeTrackingActivity.resources.getString(R.string.analyze_image_button_start)
+        }
+
         if(!PermissionUtils.permissionGranted(this, arrayOf(Manifest.permission.CAMERA))) {
             if(!this.beenAskedPermission) {
                 this.beenAskedPermission = true
@@ -53,6 +62,11 @@ class EyeTrackingActivity : AppCompatActivity() {
         } else {
             CameraManager.provideCamera(this,this::bindPreview)
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        CameraManager.undoCamera(this)
     }
 
     override fun onRequestPermissionsResult(
