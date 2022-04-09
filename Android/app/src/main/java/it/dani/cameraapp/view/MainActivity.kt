@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
         this.gyroscopeListener = GyroscopeListener.get().apply {
             onChange += {
-                val calc = (((it.values[0] + 10) * 100).toInt() / 2000f)
+                val calc = ((it.values[0] * -1) + 10) / 20.0f
                 findViewById<ImageView>(R.id.imageBackground).apply {
                     val params = layoutParams as ConstraintLayout.LayoutParams
                     params.horizontalBias = calc
