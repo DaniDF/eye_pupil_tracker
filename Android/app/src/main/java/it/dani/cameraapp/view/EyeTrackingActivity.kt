@@ -262,13 +262,14 @@ class EyeTrackingActivity : AppCompatActivity() {
                 val canvas = Canvas(bitmap)
                 val boundingBox = adjustFunc(obj.boundingBox)
 
-                val rectF = Rect((boundingBox.left * canvas.width).toInt(),
-                    (boundingBox.top * canvas.height).toInt(),
-                    (boundingBox.right * canvas.width).toInt(),
-                    (boundingBox.bottom * canvas.height).toInt())
+                val rectF = Rect((boundingBox.left.coerceAtMost(1.0f) * canvas.width).toInt(),
+                    (boundingBox.top.coerceAtMost(1.0f) * canvas.height).toInt(),
+                    (boundingBox.right.coerceAtMost(1.0f) * canvas.width).toInt(),
+                    (boundingBox.bottom.coerceAtMost(1.0f) * canvas.height).toInt())
 
                 canvas.drawRect(rectF,Paint().apply {
                     color = this@EyeTrackingActivity.getAnalyzeColor(count)
+                    strokeWidth = 10f
                     style = Paint.Style.STROKE
                 })
 

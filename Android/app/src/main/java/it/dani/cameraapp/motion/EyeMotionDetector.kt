@@ -99,7 +99,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
         var result = eyes[0].boundingBox.left to eyes[0].boundingBox.top
         eyes.forEach {
             if(it.boundingBox.left < result.first) {
-                result = it.boundingBox.left to it.boundingBox.top
+                result = (it.boundingBox.left + it.boundingBox.right)/2 to (it.boundingBox.top + it.boundingBox.bottom)/2
             }
         }
 
@@ -119,7 +119,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
         var result = eyes[0].boundingBox.left to eyes[0].boundingBox.top
         eyes.forEach {
             if(it.boundingBox.left > result.first) {
-                result = it.boundingBox.left to it.boundingBox.top
+                result = (it.boundingBox.left + it.boundingBox.right)/2 to (it.boundingBox.top + it.boundingBox.bottom)/2
             }
         }
 

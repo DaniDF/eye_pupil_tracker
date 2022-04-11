@@ -26,7 +26,7 @@ class EyeTrackingDetector : ObjectDetection() {
     private val customObjectDetectorOptions = CustomObjectDetectorOptions.Builder(this.localModel).apply {
         setDetectorMode(CustomObjectDetectorOptions.STREAM_MODE)
         enableMultipleObjects()
-        setClassificationConfidenceThreshold(0.9f)
+        setClassificationConfidenceThreshold(0.99f)
         setMaxPerObjectLabelCount(5)
     }.build()
 

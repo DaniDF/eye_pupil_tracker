@@ -144,9 +144,10 @@ class GameActivity : AppCompatActivity() {
         val analyzer : ObjectDetection = EyeTrackingDetector()
 
         EyeMotionDetector(analyzer).apply {
-            val handler : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = { l,_ ->
-                val x = 1.0f - l.first
-                val y = 1.0f - l.second
+            val handler : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = { l,r ->
+                val x = 1.0f - (l.first + r.first) / 2
+                val y = (l.second + r.second) / 2
+
 
                 Log.i("Game_cursor","x = $x, y = $y")
 
