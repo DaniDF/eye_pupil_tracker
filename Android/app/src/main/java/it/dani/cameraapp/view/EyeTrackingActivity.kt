@@ -103,6 +103,7 @@ class EyeTrackingActivity : AppCompatActivity() {
 
         var isPreviewActive = false
         var isAnalyzeActive = false
+
         var cameraSelected = CameraSelector.LENS_FACING_FRONT
 
         var cameraSelector = CameraSelector.Builder()
@@ -117,7 +118,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val adjustFrontFunc = { boundingBox : BoundingBox -> BoundingBox(1.0f - boundingBox.left, boundingBox.top,1.0f - boundingBox.right,boundingBox.bottom) }
+        val adjustFrontFunc = { boundingBox : BoundingBox -> BoundingBox(1.0f - boundingBox.right, boundingBox.top,1.0f - boundingBox.left,boundingBox.bottom) }
         val adjustDflFunc = { boundingBox : BoundingBox -> boundingBox }
         var adjustFunc = when(cameraSelected) {
             CameraSelector.LENS_FACING_FRONT -> adjustFrontFunc
@@ -132,15 +133,13 @@ class EyeTrackingActivity : AppCompatActivity() {
             }
 
             var handler : (Int,Int) -> Unit = {_,_->}
-            handler = { x,y ->
+            handler = { width,height ->
                 findViewById<View>(R.id.eye_tracking_view).also {
                     var handlerView = {}
                     handlerView = {
                         findViewById<View>(R.id.analyze_view).apply {
                             val params = layoutParams as ConstraintLayout.LayoutParams
                             val screenWidth = it.measuredWidth
-                            val height = x.max(y)
-                            val width = x.min(y)
                             params.height = (((height * 1.0f) / width) * screenWidth).toInt()
                             layoutParams = params
                         }
@@ -262,10 +261,14 @@ class EyeTrackingActivity : AppCompatActivity() {
                 val canvas = Canvas(bitmap)
                 val boundingBox = adjustFunc(obj.boundingBox)
 
+                Log.d("Dimensions","l = ${boundingBox.left}, r = ${boundingBox.right}, h = ${canvas.width}")
+
                 val rectF = Rect((boundingBox.left.coerceAtMost(1.0f) * canvas.width).toInt(),
                     (boundingBox.top.coerceAtMost(1.0f) * canvas.height).toInt(),
                     (boundingBox.right.coerceAtMost(1.0f) * canvas.width).toInt(),
                     (boundingBox.bottom.coerceAtMost(1.0f) * canvas.height).toInt())
+
+                Log.d("Dimensions","l = ${rectF.left}, r = ${rectF.right}, h = ${canvas.width}")
 
                 canvas.drawRect(rectF,Paint().apply {
                     color = this@EyeTrackingActivity.getAnalyzeColor(count)
@@ -307,21 +310,5 @@ class EyeTrackingActivity : AppCompatActivity() {
 
     private fun DetectedObject.stringObjs() : String {
         return "id[${this.trackingId}] labels[${this.labels.map { "${it.index},${it.text},${it.confidence}" }}] ${this.boundingBox}"
-    }
-
-    private fun Int.max(o : Int) : Int {
-        return if(this >= o) {
-            this
-        } else {
-            o
-        }
-    }
-
-    private fun Int.min(o : Int) : Int {
-        return if(this <= o) {
-            this
-        } else {
-            o
-        }
     }
 }

@@ -32,7 +32,7 @@ class EyeTrackingDetectorMock : ObjectDetection() {
     @SuppressLint("UnsafeOptInUsageError")
     override fun analyze(image: ImageProxy) {
 
-        if(System.currentTimeMillis() - this.oldTime > 5000) {
+        if(System.currentTimeMillis() - this.oldTime > 10000) {
             this.oldTime = System.currentTimeMillis()
 
             val boundingBoxL = BoundingBox(
@@ -63,12 +63,12 @@ class EyeTrackingDetectorMock : ObjectDetection() {
                 this.currentPosition = 0
             }
 
-            super.onSuccess.forEach { it(listOf(detectedObjectL,detectedObjectR)) }
-
             image.image?.let {
                 val inputImage = InputImage.fromMediaImage(it,image.imageInfo.rotationDegrees)
                 super.onGiveImageSize.forEach { it(inputImage.width,inputImage.height) }
             }
+
+            super.onSuccess.forEach { it(listOf(detectedObjectL,detectedObjectR)) }
         }
 
         image.close()

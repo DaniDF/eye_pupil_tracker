@@ -26,7 +26,7 @@ class EyeTrackingDetector : ObjectDetection() {
     private val customObjectDetectorOptions = CustomObjectDetectorOptions.Builder(this.localModel).apply {
         setDetectorMode(CustomObjectDetectorOptions.STREAM_MODE)
         enableMultipleObjects()
-        setClassificationConfidenceThreshold(0.99f)
+        setClassificationConfidenceThreshold(0.9f)
         setMaxPerObjectLabelCount(5)
     }.build()
 
@@ -55,16 +55,19 @@ class EyeTrackingDetector : ObjectDetection() {
                 addOnSuccessListener { l ->
                     Log.d("ANALYZER","Found: something [objects: ${l.size}]")
 
+                    val width = minOf(image.width,image.height)
+                    val height = maxOf(image.width,image.height)
+
                     val detectedObjects : MutableList<DetectedObject> = ArrayList()
                     l.forEachIndexed { i,b ->
-                        val boundingBox = BoundingBox((b.boundingBox.left*1.0f)/image.width,
-                            (b.boundingBox.top*1.0f)/image.height,
-                            (b.boundingBox.right*1.0f)/image.width,
-                            (b.boundingBox.bottom*1.0f)/image.height)
+                        val boundingBox = BoundingBox((b.boundingBox.left*1.0f)/width,
+                            (b.boundingBox.top*1.0f)/height,
+                            (b.boundingBox.right*1.0f)/width,
+                            (b.boundingBox.bottom*1.0f)/height)
                         detectedObjects += DetectedObject(boundingBox,b.trackingId ?: i,b.labels)
                     }
+                    this@EyeTrackingDetector.onGiveImageSize.forEach { it(width,height) }
                     this@EyeTrackingDetector.onSuccess.forEach { it(detectedObjects) }
-                    this@EyeTrackingDetector.onGiveImageSize.forEach { it(inputImage.width,inputImage.height) }
                 }
                 addOnCompleteListener {
                     img.close()
