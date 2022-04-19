@@ -6,8 +6,8 @@
     <string name="content_description_background_image">Background image</string>
 
     <string name="game_button">Play game</string>
-    <string name="calibration_button">Calibration</string>
-    <string name="nerd_button">Nerd</string>
+    <string name="calibration_button_description">Calibration</string>
+    <string name="nerd_button_description">Nerd view</string>
 
     <string name="calibration_dot_tl">Calibration top left</string>
     <string name="calibration_dot_tr">Calibration top right</string>
@@ -20,7 +20,6 @@
     <string name="preview_image_button_stop">Stop preview</string>
     <string name="analyze_image_button_start">Analyze</string>
     <string name="analyze_image_button_stop">Stop</string>
-    <string name="analyze_image_description">Analyzed image</string>
     <string name="analyze_image_switch_camera">Switch camera</string>
 
     <string name="game_question_default"> </string>

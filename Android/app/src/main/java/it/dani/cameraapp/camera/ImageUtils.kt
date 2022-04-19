@@ -6,9 +6,16 @@ import java.io.ByteArrayOutputStream
 
 /**
  * @author Daniele
+ *
+ * This class provides utilities for operating on [Image] classes
  */
-@Deprecated("To be deleted")
 object ImageUtils {
+
+    /**
+     * This method transform an [Image] into a [Bitmap]
+     *
+     * @return The converted bitmap
+     */
     fun Image.toBitmap(): Bitmap {
         val yBuffer = planes[0].buffer
         val uBuffer = planes[1].buffer

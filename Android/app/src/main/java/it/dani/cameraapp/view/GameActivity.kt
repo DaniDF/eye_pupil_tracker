@@ -141,21 +141,20 @@ class GameActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val analyzer : ObjectDetection = EyeTrackingDetector()
+        val analyzer : ObjectDetection = EyeTrackingDetector(this)
 
         EyeMotionDetector(analyzer).apply {
-            val handler : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = { l,r ->
-                val x = 1.0f - (l.first + r.first) / 2
-                val y = (l.second + r.second) / 2
-
+            val handler : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = { l,_ ->
+                val x = 1.0f - l.first//(l.first + r.first) / 2
+                val y = l.second//(l.second + r.second) / 2
 
                 Log.i("Game_cursor","x = $x, y = $y")
 
                 runOnUiThread {
                     when {
-                        x <= 0.30 && y <= 0.30 -> this@GameActivity.buttons[0].callOnClick()
+                        x <= 0.40 && y <= 0.30 -> this@GameActivity.buttons[0].callOnClick()
                         x >= 0.70 && y <= 0.30 -> this@GameActivity.buttons[1].callOnClick()
-                        x <= 0.30 && y >= 0.70 -> this@GameActivity.buttons[2].callOnClick()
+                        x <= 0.40 && y >= 0.70 -> this@GameActivity.buttons[2].callOnClick()
                         x >= 0.70 && y >= 0.70 -> this@GameActivity.buttons[3].callOnClick()
                     }
                 }
@@ -168,7 +167,7 @@ class GameActivity : AppCompatActivity() {
 
                 val canvas = Canvas(bitmap)
 
-                canvas.drawCircle(x * width - DOT_RADIUS,y * height - DOT_RADIUS, DOT_RADIUS, Paint().apply {
+                canvas.drawCircle(x * width - DOT_RADIUS/2,y * height - DOT_RADIUS/2, DOT_RADIUS, Paint().apply {
                     color = Color.RED
                 })
 

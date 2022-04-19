@@ -1,11 +1,12 @@
 package it.dani.cameraapp.camera
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.camera.core.ImageProxy
-import com.google.mlkit.common.model.LocalModel
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
+import it.dani.cameraapp.camera.ImageUtils.toBitmap
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.task.vision.detector.ObjectDetector
 
 /**
  * @author Daniele
@@ -13,27 +14,21 @@ import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
  * This class extends [ObjectDetection], is dedicated to detect eye on an image
  */
 
-class EyeTrackingDetector : ObjectDetection() {
-
-    /**
-     * @property[localModel] The Tensorflow lite model used for detections
-     */
-    private val localModel = LocalModel.Builder().setAssetFilePath("eye_tracking.tflite").build()
+class EyeTrackingDetector(context: Context) : ObjectDetection() {
 
     /**
      * @property[customObjectDetectorOptions] Specific options for detections
      */
-    private val customObjectDetectorOptions = CustomObjectDetectorOptions.Builder(this.localModel).apply {
-        setDetectorMode(CustomObjectDetectorOptions.STREAM_MODE)
-        enableMultipleObjects()
-        setClassificationConfidenceThreshold(0.9f)
-        setMaxPerObjectLabelCount(5)
-    }.build()
+    private val customObjectDetectorOptions = ObjectDetector.ObjectDetectorOptions.builder()
+        .setMaxResults(5)
+        .setScoreThreshold(0.5f)
+        .build()
+
 
     /**
      * @property[objectDetector] The object detector object
      */
-    private val objectDetector = com.google.mlkit.vision.objects.ObjectDetection.getClient(this.customObjectDetectorOptions)
+    private val objectDetector = ObjectDetector.createFromFileAndOptions(context,"converted_model_NEW.tflite",this.customObjectDetectorOptions)
 
 
     /**
@@ -45,34 +40,32 @@ class EyeTrackingDetector : ObjectDetection() {
     override fun analyze(image: ImageProxy) {
 
         image.image?.let{ img ->
-            val inputImage = InputImage.fromMediaImage(img,image.imageInfo.rotationDegrees)
+            val width = minOf(image.width,image.height)
+            val height = maxOf(image.width,image.height)
 
-            this.objectDetector.process(inputImage).apply {
-                addOnFailureListener { e ->
-                    Log.e("ANALYZER","Error: ${e.message}")
-                    e.printStackTrace()
-                }
-                addOnSuccessListener { l ->
-                    Log.d("ANALYZER","Found: something [objects: ${l.size}]")
+            val tensorImage = TensorImage.fromBitmap(img.toBitmap())
 
-                    val width = minOf(image.width,image.height)
-                    val height = maxOf(image.width,image.height)
+            val detectedObjects = this.objectDetector.detect(tensorImage)
+            if(detectedObjects.isNotEmpty()) {
+                Log.d("ANALYZER","Found: something [objects: ${detectedObjects.size}]")
 
-                    val detectedObjects : MutableList<DetectedObject> = ArrayList()
-                    l.forEachIndexed { i,b ->
-                        val boundingBox = BoundingBox((b.boundingBox.left*1.0f)/width,
-                            (b.boundingBox.top*1.0f)/height,
-                            (b.boundingBox.right*1.0f)/width,
-                            (b.boundingBox.bottom*1.0f)/height)
-                        detectedObjects += DetectedObject(boundingBox,b.trackingId ?: i,b.labels)
-                    }
-                    this@EyeTrackingDetector.onGiveImageSize.forEach { it(width,height) }
-                    this@EyeTrackingDetector.onSuccess.forEach { it(detectedObjects) }
+                val result : MutableList<DetectedObject> = ArrayList()
+
+                detectedObjects.forEachIndexed { i,d ->
+                    val boundingBox = BoundingBox((d.boundingBox.left*1.0f)/width,
+                        (d.boundingBox.top*1.0f)/height,
+                        (d.boundingBox.right*1.0f)/width,
+                        (d.boundingBox.bottom*1.0f)/height)
+
+                    result += DetectedObject(boundingBox,i,d.categories)
+
+
                 }
-                addOnCompleteListener {
-                    img.close()
-                    image.close()
-                }
+
+                this@EyeTrackingDetector.onGiveImageSize.forEach { it(width,height) }
+                this@EyeTrackingDetector.onSuccess.forEach { it(result) }
+                img.close()
+                image.close()
             }
         }
     }

@@ -125,7 +125,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             else -> adjustDflFunc
         }
 
-        val analyzer : ObjectDetection = EyeTrackingDetector().apply {
+        val analyzer : ObjectDetection = EyeTrackingDetector(this).apply {
             onSuccess += {
                 runOnUiThread {
                     this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc)
@@ -287,7 +287,7 @@ class EyeTrackingActivity : AppCompatActivity() {
                 val logVal = StringBuilder("[COUNT_$count ")
 
                 for(ll in obj.labels) {
-                    logVal.append("${ll.text} ${ll.confidence}")
+                    logVal.append("${ll.label} ${ll.score}")
                 }
 
                 logVal.append("]\n")
@@ -309,6 +309,6 @@ class EyeTrackingActivity : AppCompatActivity() {
     }
 
     private fun DetectedObject.stringObjs() : String {
-        return "id[${this.trackingId}] labels[${this.labels.map { "${it.index},${it.text},${it.confidence}" }}] ${this.boundingBox}"
+        return "id[${this.trackingId}] labels[${this.labels.map { "${it.label},${it.displayName},${it.score}" }}] ${this.boundingBox}"
     }
 }

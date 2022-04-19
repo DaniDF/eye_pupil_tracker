@@ -2,10 +2,10 @@ package it.dani.cameraapp.mock
 
 import android.annotation.SuppressLint
 import androidx.camera.core.ImageProxy
-import com.google.mlkit.vision.common.InputImage
 import it.dani.cameraapp.camera.BoundingBox
 import it.dani.cameraapp.camera.DetectedObject
 import it.dani.cameraapp.camera.ObjectDetection
+import org.tensorflow.lite.support.label.Category
 
 /**
  * @author Daniele
@@ -43,7 +43,7 @@ class EyeTrackingDetectorMock : ObjectDetection() {
             )
             val detectedObjectL = DetectedObject(
                 boundingBoxL,
-                this.currentPosition, mutableListOf(com.google.mlkit.vision.objects.DetectedObject.Label("Eye L Mock",1f,1))
+                this.currentPosition, mutableListOf(Category("Eye L Mock",1.0f))
             )
 
             val boundingBoxR = BoundingBox(
@@ -54,7 +54,7 @@ class EyeTrackingDetectorMock : ObjectDetection() {
             )
             val detectedObjectR = DetectedObject(
                 boundingBoxR,
-                this.currentPosition, mutableListOf(com.google.mlkit.vision.objects.DetectedObject.Label("Eye R Mock",1f,2))
+                this.currentPosition, mutableListOf(Category("Eye R Mock",1.0f))
             )
 
             if(this.currentPosition+1 < POSITIONS.size) {
@@ -63,9 +63,11 @@ class EyeTrackingDetectorMock : ObjectDetection() {
                 this.currentPosition = 0
             }
 
-            image.image?.let {
-                val inputImage = InputImage.fromMediaImage(it,image.imageInfo.rotationDegrees)
-                super.onGiveImageSize.forEach { it(inputImage.width,inputImage.height) }
+            image.image?.let { img ->
+                //val inputImage = InputImage.fromMediaImage(img,image.imageInfo.rotationDegrees)
+                val width = minOf(img.width,img.height)
+                val height = maxOf(img.width,img.height)
+                super.onGiveImageSize.forEach { it(width,height) }
             }
 
             super.onSuccess.forEach { it(listOf(detectedObjectL,detectedObjectR)) }

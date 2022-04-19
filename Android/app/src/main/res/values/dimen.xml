@@ -3,11 +3,6 @@
 
     <dimen name="layout_margin">10dp</dimen>
 
-    <dimen name="button_border_radius">18dp</dimen>
-    <dimen name="button_width">150dp</dimen>
-    <dimen name="button_height">60dp</dimen>
-    <dimen name="button_textSize">20sp</dimen>
-
     <dimen name="title_textSize">50sp</dimen>
 
     <dimen name="game_question_margin">60dp</dimen>

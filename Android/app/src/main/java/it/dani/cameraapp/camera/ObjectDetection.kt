@@ -1,6 +1,7 @@
 package it.dani.cameraapp.camera
 
 import androidx.camera.core.ImageAnalysis
+import org.tensorflow.lite.support.label.Category
 
 /**
  * @author Daniele
@@ -24,10 +25,10 @@ abstract class ObjectDetection : ImageAnalysis.Analyzer {
  * This class represents a detected object
  *
  * @param[boundingBox] A rectangle that surround the detected object
- * @param[labels] A list of labels (see [com.google.mlkit.vision.objects.DetectedObject.Label]) that's describe what is in the box
+ * @param[labels] A list of labels (see [Category]) that's describe what is in the box
  * @param[trackingId] An id of the detection
  */
-data class DetectedObject(val boundingBox : BoundingBox, val trackingId : Int, val labels : List<com.google.mlkit.vision.objects.DetectedObject.Label>)
+data class DetectedObject(val boundingBox : BoundingBox, val trackingId : Int, val labels : List<Category>)
 
 /**
  * This class represents a bounding box rectangle

@@ -73,7 +73,7 @@
         android:textColor="?attr/colorOnPrimary"
         android:contentDescription="@string/analyze_image_switch_camera"
         app:tint="?attr/colorOnPrimary"
-        app:srcCompat="@drawable/ic_cameraswitch"
+        app:srcCompat="@drawable/ic_camera_switch"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/analyze_button"
