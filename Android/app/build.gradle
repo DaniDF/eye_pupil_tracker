@@ -10,8 +10,8 @@ android {
         applicationId "it.dani.cameraapp"
         minSdk 21
         targetSdk 31
-        versionCode 14
-        versionName "1.2.10"
+        versionCode 15
+        versionName "1.2.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -52,9 +52,12 @@ dependencies {
 
     implementation 'com.google.mlkit:object-detection-custom:17.0.0'
 
-    implementation 'com.google.code.gson:gson:2.8.9'
-
     implementation 'org.tensorflow:tensorflow-lite-task-vision:0.3.1'
+    implementation 'org.tensorflow:tensorflow-lite-support:0.3.1'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.3.1'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:2.3.0'
+
+    implementation 'com.google.code.gson:gson:2.8.9'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

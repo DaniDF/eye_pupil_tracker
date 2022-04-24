@@ -125,7 +125,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             else -> adjustDflFunc
         }
 
-        val analyzer : ObjectDetection = EyeTrackingDetector(this).apply {
+        val analyzer : ObjectDetection = NewEyeTrackingDetector(this).apply {
             onSuccess += {
                 runOnUiThread {
                     this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc)
@@ -261,14 +261,10 @@ class EyeTrackingActivity : AppCompatActivity() {
                 val canvas = Canvas(bitmap)
                 val boundingBox = adjustFunc(obj.boundingBox)
 
-                Log.d("Dimensions","l = ${boundingBox.left}, r = ${boundingBox.right}, h = ${canvas.width}")
-
                 val rectF = Rect((boundingBox.left.coerceAtMost(1.0f) * canvas.width).toInt(),
                     (boundingBox.top.coerceAtMost(1.0f) * canvas.height).toInt(),
                     (boundingBox.right.coerceAtMost(1.0f) * canvas.width).toInt(),
                     (boundingBox.bottom.coerceAtMost(1.0f) * canvas.height).toInt())
-
-                Log.d("Dimensions","l = ${rectF.left}, r = ${rectF.right}, h = ${canvas.width}")
 
                 canvas.drawRect(rectF,Paint().apply {
                     color = this@EyeTrackingActivity.getAnalyzeColor(count)
@@ -284,7 +280,7 @@ class EyeTrackingActivity : AppCompatActivity() {
                     )
                 }
 
-                val logVal = StringBuilder("[COUNT_$count ")
+                val logVal = StringBuilder("[")
 
                 for(ll in obj.labels) {
                     logVal.append("${ll.label} ${ll.score}")

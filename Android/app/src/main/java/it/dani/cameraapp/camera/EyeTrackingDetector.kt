@@ -21,14 +21,14 @@ class EyeTrackingDetector(context: Context) : ObjectDetection() {
      */
     private val customObjectDetectorOptions = ObjectDetector.ObjectDetectorOptions.builder()
         .setMaxResults(5)
-        .setScoreThreshold(0.5f)
+        .setScoreThreshold(this.accuracyThreshold)
         .build()
 
 
     /**
      * @property[objectDetector] The object detector object
      */
-    private val objectDetector = ObjectDetector.createFromFileAndOptions(context,"converted_model_NEW.tflite",this.customObjectDetectorOptions)
+    private val objectDetector = ObjectDetector.createFromFileAndOptions(context,"converted_model_DFL_metadata_cpy.tflite",this.customObjectDetectorOptions)
 
 
     /**
@@ -46,27 +46,23 @@ class EyeTrackingDetector(context: Context) : ObjectDetection() {
             val tensorImage = TensorImage.fromBitmap(img.toBitmap())
 
             val detectedObjects = this.objectDetector.detect(tensorImage)
-            if(detectedObjects.isNotEmpty()) {
-                Log.d("ANALYZER","Found: something [objects: ${detectedObjects.size}]")
+            Log.d("ANALYZER","Found: something [objects: ${detectedObjects.size}]")
 
-                val result : MutableList<DetectedObject> = ArrayList()
+            val result : MutableList<DetectedObject> = ArrayList()
+            detectedObjects.forEachIndexed { i,d ->
+                val boundingBox = BoundingBox((d.boundingBox.left*1.0f)/width,
+                    (d.boundingBox.top*1.0f)/height,
+                    (d.boundingBox.right*1.0f)/width,
+                    (d.boundingBox.bottom*1.0f)/height)
 
-                detectedObjects.forEachIndexed { i,d ->
-                    val boundingBox = BoundingBox((d.boundingBox.left*1.0f)/width,
-                        (d.boundingBox.top*1.0f)/height,
-                        (d.boundingBox.right*1.0f)/width,
-                        (d.boundingBox.bottom*1.0f)/height)
-
-                    result += DetectedObject(boundingBox,i,d.categories)
-
-
-                }
-
-                this@EyeTrackingDetector.onGiveImageSize.forEach { it(width,height) }
-                this@EyeTrackingDetector.onSuccess.forEach { it(result) }
-                img.close()
-                image.close()
+                result += DetectedObject(boundingBox,i,d.categories)
             }
+
+            this@EyeTrackingDetector.onGiveImageSize.forEach { it(width,height) }
+            this@EyeTrackingDetector.onSuccess.forEach { it(result) }
+
+            img.close()
+            image.close()
         }
     }
 }

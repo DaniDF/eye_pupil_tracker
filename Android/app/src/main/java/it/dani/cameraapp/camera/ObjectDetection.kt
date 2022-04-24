@@ -19,6 +19,18 @@ abstract class ObjectDetection : ImageAnalysis.Analyzer {
      * @property[onGiveImageSize] List of handlers for deliver the current image (sensor) dimensions
      */
     val onGiveImageSize : MutableList<(Int,Int) -> Any> = ArrayList()
+
+    /**
+     * @property[accuracyThreshold] Threshold for detections' accuracy, under will not given
+     */
+    var accuracyThreshold = ACCURACY_THRESHOLD
+
+    companion object {
+        /**
+         * @property[ACCURACY_THRESHOLD] Default threshold for detections' accuracy, under will not given
+         */
+        private const val ACCURACY_THRESHOLD = 0.1f
+    }
 }
 
 /**
