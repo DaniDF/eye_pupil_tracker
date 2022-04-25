@@ -200,34 +200,20 @@
 \fancyfoot[L]{\thepage}
 \setcounter{page}{1}
 \section{Introduzione}
-Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando una rete neurale,
-sia in grado di riconoscere il volto dell’utente e di questo ultimo, anche i propri occhi. Il sistema sfrutterà un modello di rete neurale
+Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando una rete neurale, sia in grado di riconoscere il volto dell’utente e di questo ultimo, anche i propri occhi. Il sistema sfrutterà un modello di rete neurale
 addestrato in modo tale da essere in grado di riconoscere i visi e gli occhi di uno o più utenti grazie ad un dataset di 10 mila immagini di visi umani.
-L’applicativo permetterà sia di svolgere un filtraggio "live", cioè aprendo la camera frontale ed esterna dello smartphone
-e individuando real-time la faccia e gli occhi dell’utente, !!!! sia uno “statico” in cui si selezionano dalla galleria
-una foto e in output vengono riconosciuti gli occhi !!!! DA VEDERE SE METTERE. !!!!!
+L’applicativo permetterà di svolgere un filtraggio "live", cioè aprendo la camera frontale ed esterna dello smartphone e individuando real-time gli occhi dell’utente.
 \newline
-Inoltre, è stato implementato un gioco (SPIEGAZIONE) aiutato da un tool di calibrazione.
+Inoltre, è stato implementato un gioco composto da un Quiz di 4 domande aiutato da un tool di calibrazione. L'utente tramite il riconoscitore di occhi è in grado di rispondere ad una certa domanda spostando, tramite gli occhi e il cellulare, un puntatore verso la risposta giusta posta ai 4 angoli del dispositivo. In caso di risposta corretta, viene posta un'ulteriore domanda, altrimenti si viene avvertiti della domanda sbagliata tramite un alert.
 \newline \newline
-Tale caso di studio è un classico esempio di applicazione di machine learning e il software farà ricorso
-a una rete neurale convoluzionale (CNN). Tale scelta è dovuta al fatto che una rete neurale
-rappresenta il modo più comodo e pratico per problemi di object detection, come quello di questa
-attività in cui vengono individuati gli occhi.
+Tale caso di studio è un classico esempio di applicazione di Machine Learning e il software farà ricorso a una rete neurale convoluzionale (CNN). Tale scelta è dovuta al fatto che una rete neurale rappresenta il modo più comodo e pratico per problemi di object detection, come quello di questa attività in cui vengono individuati gli occhi.
 \newline \newline
-L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale progetto pone attenzione
-anche all’uso di risorse in quanto dovrà funzionare su smartphone, ovvero dispositivi embedded.
+L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale progetto pone attenzione anche all’uso di risorse in quanto dovrà funzionare su smartphone, ovvero dispositivi embedded.
 
 \newpage
 
 \section{Rete Neurale}
-L’obbiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di
-riconoscere gli occhi di una o più persone. A tal scopo si è utilizzato un modello messo a disposizione dalla libreria
-TensorFlow ottimizzato per il training di modelli specifici per object detection di immagini. Visto
-l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per ResNet e MobileNet,
-una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato
-per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da
-essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una
-precisione adeguata.
+L’obiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. A tal scopo si è utilizzato un modello messo a disposizione dalla libreria TensorFlow 2 Detection Model Zoo ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
 
 
 \subsection{Dataset}
@@ -236,12 +222,22 @@ Per il training del modello si è utilizzato un dataset pubblico rilasciato da G
 Oltre alle immagini il dataset conteneva un utile file Excel che indicava le coordinate della posizione degli occhi delle persone all'interno dell'immagine.
 \newline \newline
 Prima dell'addestramento della rete era però necessario convertire questi dati di input in file XML in modo tale da poterli poi convertire in TFRecord, utili per TensorFlow. Per questo motivo è stato implementato uno script Java in grado di creare un file XML per ogni foto del dataset con al suo interno le informazioni geografiche della posizione degli occhi. 
+Inoltre, si è reso necessario compilare il file labelmap.pbtxt con al suo interno i nomi e gli id di nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "Human eye".
+\begin{figure}[h]
+\caption{labelmap.pbtxt}
+\centering
+\includegraphics[scale=1]{img/item.png}
+\end{figure}
 
 
 \subsection{Training}
-Si è quindi proceduto all’addestramento della rete
-tramite Python usando TensorFlow e le API di Keras. Si è ottenuto in output un modello addestrato
-e pronto all’uso. 
+Si è quindi proceduto all’addestramento della rete tramite Python usando TensorFlow e le API di Keras. Si è reso necessario modificare il file \textit{pipeline.config} adattandolo alle nostre esigenze: 
+\begin{itemize}
+    \item \textit{numclasses} che corrisponde al numero di item da identificare;
+    \item \textit{path} vari da adattare al nostro workspace, tra cui il path per i checkpoint, per i record di input e per il labelmap.
+\end{itemize}
+
+Si è ottenuto in output un modello addestrato e pronto all’uso. 
 \newline \newline
 Prima di testare direttamente su Android, abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib, utile per visualizzare graficamente via shell i nostri risultati. In particolare abbiamo usato Tkinter, l'unico framework GUI incluso nella libreria standard di Python.
 \newline
@@ -251,7 +247,11 @@ personaggio pubblico, quello di Barack Obama, e anche un'immagine contenente pi�
 
 \subsection{TFLite}
 Dopo esserci accertati che la rete funzionasse correttamente e avesse dei livelli di precisione sopra una certa soglia, si è ottenuto in output un modello addestrato
-e pronto all’uso, che poi è stato convertito in un formato adatto ai sistemi embedded, quello di TensorFlow Lite.
+e pronto all’uso, che poi è stato convertito e quantizzato in un formato adatto ai sistemi embedded, quello di TensorFlow Lite.
+\subsubsection{Metadata}
+Per un corretto funzionamento della rete neurale all'interno di Android, tflite richiede che venga generato anche un file Metadata che contiene le informazioni necessarie per pre-processare le immagini. Questo file si rende necessario in quanto i nostri tensori di input sono di tipo kTfLiteFloat32. 
+\newline
+Una volta generato questo nuovo file metadata.tflite siamo pronti ad importarlo all'interno della nostra applicazione Android come file di Machine Learning "ml".
 
 
 \newpage
@@ -272,17 +272,17 @@ Sono da segnalare i 3 principali bottoni dell'applicazione:
 
 \subsection{Nerd Mode}
 Modalità la cui utilità è quella di individuare real time gli occhi della persona, in particolare permette di vedere i boxes creati dalla rete neruale attorno agli occhi dell'utente.
-\\Interfaccia che presenta diversi bottoni:
+\\Interfaccia che presenta 3 bottoni:
 \begin{itemize}
     \item Preview che permette di avviare la propria fotocamera frontale o esterna;
-    \item Analyze che permette appunto la visualizzazione dei boxes creati dalla rete neurale in real time.
+    \item Analyze che permette la visualizzazione dei boxes creati dalla rete neurale in real time.
     \item Fotocamera frontale/esterna per cambiare da una fotocamera all'altra.
 \end{itemize}
 \subsubsection{Bottone Analyze}
 
 
 \subsection{Calibration}
-Modalità usata per calibrare al meglio la fotocamera e ottenere risultati i più veritieri possibili. Qui di sotto la sua schermata.
+Modalità usata per calibrare al meglio la fotocamera e ottenere risultati i più veritieri possibili. Utile per svolgere al meglio il mini gioco descritto in seguito. Qui di sotto la sua schermata.
 
 
 \begin{figure}[h]
@@ -294,7 +294,9 @@ Modalità usata per calibrare al meglio la fotocamera e ottenere risultati i pi�
 
 \newpage
 \subsection{Game}
-Modalità usata per completare un mini-gioco sfruttando le potenzialità della rete neurale sottostante. Tramite un mini gioco Quiz infatti, l'utente può rispondere alle domande del Quiz semplicemente spostando lo sguardo sulle possibili risposte e soffermandosi il più tempo possibile sulla sua scelta. I dati delle domande e delle risposte sono state recuperate da uno dei tanti servizi di Api pubblici che si trovano in rete: tramite appunto una richiesta Url, vengono ricevuti i dati casuali in formato JSON per una singola domanda, e una volta ricevuta la risposta, corretta o sbagliata che sia, viene generata un'altra richiesta in modo tale da poter continuare il mini gioco. 
+Modalità usata per completare un mini-gioco sfruttando le potenzialità della rete neurale sottostante. Tramite un mini gioco Quiz infatti, l'utente può rispondere alle domande del Quiz semplicemente spostando il cellulare verso uno dei 4 angoli dove è posizionata la risposta corretta: infatti viene riconosciuto l'occhio e viene visualizzato un puntatore che lo identifica sullo schermo. La domanda viene posta al centro dello schermo per motivi pratici.
+\newline
+I dati delle domande e delle risposte sono state recuperate da uno dei tanti servizi di Api pubblici che si trovano in rete: tramite appunto una richiesta Url, vengono ricevuti i dati casuali in formato JSON per una singola domanda, e una volta ricevuta la risposta, corretta o sbagliata che sia, viene generata un'altra richiesta in modo tale da poter continuare il mini gioco. 
 \begin{figure}[h]
 	\centering
 	\caption{Schermata Game}
