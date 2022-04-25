@@ -8,7 +8,7 @@
 
 
 ## Jupiter Notebook
-[train_custom_object_detection.ipynb] (https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/train_custom_object_detection.ipynb)
+[train_custom_object_detection.ipynb](https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/train_custom_object_detection.ipynb)
 
 ## Folders
 
