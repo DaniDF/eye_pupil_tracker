@@ -4,6 +4,7 @@
     <string name="permission_camera_denied">Sorry, camera permission denied</string>
 
     <string name="content_description_background_image">Background image</string>
+    <string name="content_description_target_image">Target image</string>
 
     <string name="game_button">Play game</string>
     <string name="calibration_button_description">Calibration</string>

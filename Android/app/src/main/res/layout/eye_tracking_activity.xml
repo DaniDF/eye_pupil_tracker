@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:id="@+id/eye_tracking_view"
     android:keepScreenOn="true"
-    tools:context=".view.EyeTrackingActivity">
+    tools:context=".view.EyeTrackingActivity"
+    android:backgroundTint="?attr/layout_background_tint">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/preview_view"

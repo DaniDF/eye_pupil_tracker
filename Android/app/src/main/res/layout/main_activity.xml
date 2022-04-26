@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:id="@+id/main_view">
+    android:id="@+id/main_view"
+    android:backgroundTint="?attr/layout_background_tint">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -18,15 +19,26 @@
 
         <ImageView
             android:id="@+id/imageBackground"
-            android:layout_width="800dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:contentDescription="@string/content_description_background_image"
+            app:srcCompat="@drawable/ic_eye"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/eye_colorized" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageTarget"
+            android:layout_width="200dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/content_description_target_image"
+            app:srcCompat="@drawable/ic_target"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

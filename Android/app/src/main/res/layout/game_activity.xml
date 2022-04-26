@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
-    android:id="@+id/game_activity">
+    android:id="@+id/game_activity"
+    android:backgroundTint="?attr/layout_background_tint">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/abResponseView"

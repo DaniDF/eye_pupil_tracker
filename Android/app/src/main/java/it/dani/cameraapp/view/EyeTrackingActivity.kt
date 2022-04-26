@@ -125,7 +125,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             else -> adjustDflFunc
         }
 
-        val analyzer : ObjectDetection = NewEyeTrackingDetector(this).apply {
+        val analyzer : ObjectDetection = EyeTrackingDetector(this).apply {
             onSuccess += {
                 runOnUiThread {
                     this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc)

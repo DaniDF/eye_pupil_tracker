@@ -36,12 +36,15 @@ class MainActivity : AppCompatActivity() {
         if(this.accelerometerSensor == null) {
             Log.e("Sensors","Error: no accelerometer found")
         }
+
         this.gyroscopeListener = GyroscopeListener.get().apply {
             onChange += {
-                val calc = ((it.values[0] * -1) + 10) / 20.0f
-                findViewById<ImageView>(R.id.imageBackground).apply {
+                val calcX = it.values[0].map(10f,-10f,0.25f,0.75f)
+                val calcY = it.values[1].map(-10f,10f,0.25f,0.75f)
+                findViewById<ImageView>(R.id.imageTarget).apply {
                     val params = layoutParams as ConstraintLayout.LayoutParams
-                    params.horizontalBias = calc
+                    params.horizontalBias = calcX
+                    params.verticalBias = calcY
                     layoutParams = params
                 }
             }
@@ -78,12 +81,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         this.accelerometerSensor?.also { sensor ->
-            this.sensorManager.registerListener(gyroscopeListener,sensor,SensorManager.SENSOR_DELAY_NORMAL)
+            this.sensorManager.registerListener(gyroscopeListener,sensor,SensorManager.SENSOR_DELAY_UI)
         }
     }
 
     override fun onPause() {
         super.onPause()
         this.sensorManager.unregisterListener(this.gyroscopeListener)
+    }
+
+    private fun Float.map(inStart : Float, inEnd : Float, outStart : Float, outEnd : Float) : Float {
+        return outStart + ((outEnd - outStart) / (inEnd - inStart)) * (this - inStart)
     }
 }
