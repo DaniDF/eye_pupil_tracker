@@ -42,6 +42,18 @@ abstract class ObjectDetection : ImageAnalysis.Analyzer {
  */
 data class DetectedObject(val boundingBox : BoundingBox, val trackingId : Int, val labels : List<Category>)
 
+
+/**
+ * This function adds a method to a [List] of [Category] to calculate the average score based on the score of single label
+ */
+fun List<Category>.averageScore() : Float {
+    var result = 0f
+
+    this.forEach { result += it.score }
+
+    return result / this.size
+}
+
 /**
  * This class represents a bounding box rectangle
  *

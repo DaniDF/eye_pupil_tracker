@@ -74,7 +74,7 @@ class EyeTrackingDetector(context: Context) : ObjectDetection() {
             }
 
             this@EyeTrackingDetector.onGiveImageSize.forEach { it(width,height) }
-            this@EyeTrackingDetector.onSuccess.forEach { it(result) }
+            this@EyeTrackingDetector.onSuccess.forEach { it(result.sortedByDescending { it.labels.averageScore()}) }
 
             img.close()
             image.close()
