@@ -16,7 +16,7 @@
 > + [CSVConverter][lk_csv]: XML generator according to csv fiftyone dataset file
 > + [Models][lk_tf]: tflite neural networks
 > + [Remote_training][lk_rt]: tools for neural network training
-> + [Report][lk_rp]: report latex + ppt
+> + [Report][lk_rp]: Latex Report Pdf + PowerPoint Presentation + Jupyter Notebook
 
 [lk_andr]: https://github.com/luigidinuzzo/sistemiDigitali2022/tree/master/Android	"Android"
 [lk_csv]: https://github.com/luigidinuzzo/sistemiDigitali2022/tree/master/CSVConverter "CSVConverter"
