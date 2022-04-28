@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.camera.core.ImageProxy
+import com.google.mlkit.vision.common.InputImage
+import it.dani.cameraapp.camera.ImageUtils.rotateBitmap
 import it.dani.cameraapp.camera.ImageUtils.toBitmap
 import it.dani.cameraapp.ml.ConvertedModelDflMetadata
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -55,7 +57,9 @@ class EyeTrackingDetector(context: Context) : ObjectDetection() {
             val width = minOf(image.width,image.height)
             val height = maxOf(image.width,image.height)
 
-            val tensorImage = TensorImage.fromBitmap(img.toBitmap())
+            val bitmap = img.toBitmap()
+            val rotatedBitmap = bitmap.rotateBitmap(image.imageInfo.rotationDegrees.toFloat())
+            val tensorImage = TensorImage.fromBitmap(rotatedBitmap)
 
             val outputs = this.objectDetector.process(tensorImage)
 

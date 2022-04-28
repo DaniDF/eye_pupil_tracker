@@ -39,4 +39,17 @@ object ImageUtils {
         val imageBytes = out.toByteArray()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
+
+    /**
+     * This method rotates the bitmap of a given degree
+     *
+     * @param[angle] Degree of rotation (0 - 360)
+     */
+    fun Bitmap.rotateBitmap(angle: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(
+            this, 0, 0, this.width, this.height, matrix, true
+        )
+    }
 }
