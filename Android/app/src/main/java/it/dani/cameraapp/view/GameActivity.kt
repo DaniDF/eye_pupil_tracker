@@ -100,6 +100,7 @@ class GameActivity : AppCompatActivity() {
                         val response = when(this.text) {
                             question.correctAnswer.value -> {
                                 this@GameActivity.correctAnswerAction()
+                                setOnClickListener {  }
                                 this@GameActivity.resources.getString(R.string.game_answer_correct)
                             }
                             else -> this@GameActivity.resources.getString(R.string.game_answer_wrong)
@@ -141,7 +142,9 @@ class GameActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val analyzer : ObjectDetection = EyeTrackingDetector(this)
+        val analyzer : ObjectDetection = EyeTrackingDetector(this).apply {
+            accuracyThreshold = 0.5f
+        }
 
         EyeMotionDetector(analyzer).apply {
             val handler : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = { l,_ ->

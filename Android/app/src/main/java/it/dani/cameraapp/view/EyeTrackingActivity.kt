@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.slider.Slider
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.*
 import it.dani.cameraapp.view.utils.PermissionUtils
@@ -152,6 +153,16 @@ class EyeTrackingActivity : AppCompatActivity() {
                 onGiveImageSize -= handler
             }
             onGiveImageSize += handler
+        }
+
+        findViewById<Slider>(R.id.accuracy_slider).apply {
+            value = analyzer.accuracyThreshold * 100
+
+            addOnChangeListener { _, value, _ ->
+                analyzer.apply {
+                    accuracyThreshold = value / 100
+                }
+            }
         }
 
         findViewById<Button>(R.id.preview_button).apply {

@@ -86,23 +86,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@id/accuracy_slider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/accuracy_slider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:valueFrom="0.0"
+        android:valueTo="100.0"
+        android:stepSize="5.0"
+        android:contentDescription="@string/analyze_image_accuracy_slider"
         app:layout_constraintBottom_toTopOf="@id/preview_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <!--
-        <TextView
-            android:id="@+id/possibility_textview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textStyle="bold"
-            android:textColor="@color/red"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-        -->
-
-    </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
