@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact name="CSVConverter:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/CSVConverter_jar</output-path>
+  <artifact name="CSVConverter:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/CSVConverter_jar2</output-path>
     <root id="root">
       <element id="archive" name="CSVConverter.jar">
         <element id="module-output" name="CSVConverter.main" />
