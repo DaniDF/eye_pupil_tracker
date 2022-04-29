@@ -13,7 +13,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import it.dani.cameraapp.R
 import it.dani.cameraapp.view.sensor.GyroscopeListener
 import it.dani.cameraapp.view.utils.ViewUtils
-import java.time.DayOfWeek
 
 /**
  * @author Daniele

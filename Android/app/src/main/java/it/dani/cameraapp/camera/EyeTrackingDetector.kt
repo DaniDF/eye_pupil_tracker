@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.camera.core.ImageProxy
-import com.google.mlkit.vision.common.InputImage
 import it.dani.cameraapp.camera.ImageUtils.rotateBitmap
 import it.dani.cameraapp.camera.ImageUtils.toBitmap
 import it.dani.cameraapp.ml.ConvertedModelDflMetadata

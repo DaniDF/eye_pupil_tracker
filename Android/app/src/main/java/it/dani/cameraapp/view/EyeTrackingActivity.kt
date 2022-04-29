@@ -232,7 +232,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             }
         }
 
-        analysis.setAnalyzer(Executors.newSingleThreadExecutor(),analyzer)
+        analysis.setAnalyzer(Executors.newCachedThreadPool(),analyzer)
 
         cameraProvider.unbindAll()
     }
