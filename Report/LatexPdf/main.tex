@@ -29,7 +29,8 @@
 
 
 
-
+\usepackage[demo]{graphicx}
+\usepackage{subcaption}
 \usepackage{comment}
 
 
@@ -93,7 +94,7 @@
     citecolor=cyan,
     linkcolor=black,
     urlcolor=black,
-    pdftitle=TesiFilippoVeronesi,
+    pdftitle=EYE TRACKER,
     pdfauthor= Filippo Veronesi,
     }
 
@@ -213,7 +214,7 @@ L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale pr
 \newpage
 
 \section{Rete Neurale}
-L’obiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. A tal scopo si è utilizzato un modello messo a disposizione dalla libreria TensorFlow 2 Detection Model Zoo ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
+L’obiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. A tal scopo si è utilizzato un modello messo a disposizione dalla libreria \textit{TensorFlow 2 Detection Model Zoo} ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
 
 
 \subsection{Dataset}
@@ -236,15 +237,47 @@ Si è quindi proceduto all’addestramento della rete tramite Python usando Tens
     \item \textit{numclasses} che corrisponde al numero di item da identificare;
     \item \textit{path} vari da adattare al nostro workspace, tra cui il path per i checkpoint, per i record di input e per il labelmap.
 \end{itemize}
+\newline
+Durante il procedimento di training si sono tenuti controllati i valori della nostra rete. In particolare, abbiamo usato \textbf{Tensorboard}: un framework grafico utile a capire l'andamento della nostra rete, infatti abbiamo avuto modo di controllare ad ogni training le performance della nostra rete di machine learning.
+\newline
+TensorBoard fornisce la visualizzazione e gli strumenti necessari per la sperimentazione del machine learning:
+\begin{itemize}
+    \item Monitoraggio e visualizzazione di metriche come perdita e precisione;
+    \item Visualizzazione del grafico del modello (operazioni e livelli);
+    \item Visualizzazione degli istogrammi di pesi, distorsioni o altri tensori man mano che cambiano nel tempo.
+\end{itemize}
 
-Si è ottenuto in output un modello addestrato e pronto all’uso. 
+
+
+INSERIRE IMMAGINI GRAFICI
+\newline
+Si è ottenuto in output un modello addestrato e pronto all’uso.
 \newline \newline
-Prima di testare direttamente su Android, abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib, utile per visualizzare graficamente via shell i nostri risultati. In particolare abbiamo usato Tkinter, l'unico framework GUI incluso nella libreria standard di Python.
+Prima di testare direttamente su Android, abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib, utile per visualizzare graficamente via shell i nostri risultati. In particolare abbiamo usato \textbf{Tkinter}, l'unico framework GUI incluso nella libreria standard di Python.
 \newline
 A fini di testing si è preso ad esempio il volto di un
-personaggio pubblico, quello di Barack Obama, e anche un'immagine contenente più persone in modo tale da poter verificare la correttezza e la precisione della rete anche in condizioni più difficili. (INSERIRE FOTO GUI tkAgg OBAMA e PIU PERSONE)
+personaggio pubblico, quello di Albert Einstein, e anche un'immagine contenente più persone in modo tale da poter verificare la correttezza e la precisione della rete anche in condizioni più difficili. 
 
 
+
+\begin{figure}
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{img/einstein.png}
+  \caption{Test personaggio famoso}
+  \label{fig:sfig1}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+  \centering
+  \includegraphics[width=1\linewidth]{img/gruppo.png}
+  \caption{Test multiplo}
+  \label{fig:sfig2}
+\end{subfigure}
+\caption{Testing GUI TkAgg}
+\label{fig:fig}
+\end{figure}
+
+\newpage
 \subsection{TFLite}
 Dopo esserci accertati che la rete funzionasse correttamente e avesse dei livelli di precisione sopra una certa soglia, si è ottenuto in output un modello addestrato
 e pronto all’uso, che poi è stato convertito e quantizzato in un formato adatto ai sistemi embedded, quello di TensorFlow Lite.
@@ -257,29 +290,47 @@ Una volta generato questo nuovo file metadata.tflite siamo pronti ad importarlo 
 \newpage
 \section{Progetto Android}
 L'applicazione Android una volta avviata presenta la seguente interfaccia:
+
 \begin{figure}[h]
 \caption{Homepage App }
 \centering
-\includegraphics[scale=0.2]{img/home.png}
+\includegraphics[scale=0.18]{img/home.png}
 \end{figure}
 
 Sono da segnalare i 3 principali bottoni dell'applicazione:
 \begin{itemize}
-\item Nerd Mode in alto a destra;
-\item Calibration in alto a sinistra;
-\item Play Game al centro dello schermo.
+\item \textbf{Nerd Mode} in alto a destra;
+\item \textbf{Calibration} in alto a sinistra;
+\item \textbf{Play Game} al centro dello schermo.
 \end{itemize}
 
 \subsection{Nerd Mode}
-Modalità la cui utilità è quella di individuare real time gli occhi della persona, in particolare permette di vedere i boxes creati dalla rete neruale attorno agli occhi dell'utente.
+Modalità la cui utilità è quella di individuare real time gli occhi della persona, in particolare permette di vedere i boxes creati dalla rete neurale attorno agli occhi dell'utente.
 \\Interfaccia che presenta 3 bottoni:
 \begin{itemize}
-    \item Preview che permette di avviare la propria fotocamera frontale o esterna;
-    \item Analyze che permette la visualizzazione dei boxes creati dalla rete neurale in real time.
-    \item Fotocamera frontale/esterna per cambiare da una fotocamera all'altra.
+    \item \textbf{Preview} che permette di avviare la propria fotocamera frontale o esterna;
+    \item \textbf{Analyze} che permette la visualizzazione dei boxes creati dalla rete neurale in real time;
+    \item \textbf{Fotocamera} frontale/esterna per cambiare da una fotocamera all'altra.
 \end{itemize}
-\subsubsection{Bottone Analyze}
 
+\begin{figure}[h]
+\caption{Nerd mode iniziale }
+\centering
+\includegraphics[scale=0.17]{img/nerd.png}
+\end{figure}
+
+\newpage
+\subsubsection{Bottone Analyze}
+Bottone premuto una volta avviata la \textit{Preview}, ci permette di vedere per la prima volta la nostra rete addestrata al lavoro su Android.
+È stata inserita anche una barra di scorrimento in modo tale da impostare e mostrare real time a schermo gli occhi individuati solo sopra una certo livello di precisione della rete. (0\% minimo - 100\% massimo). Su Android se si inquadrano bene gli occhi, in media si ha una precisione del 80\%. 
+\newline
+Chiaramente più viene allontanato il telefono dalla faccia, più cala la precisione, ma comunque la rete individua sempre e comunque gli occhi a meno che non si provino a nascondere gli occhi o ci si metta di profilo.
+
+\begin{figure}[h]
+\caption{Nerd mode con analyze attiva }
+\centering
+\includegraphics[scale=0.17]{img/analyze.png}
+\end{figure}
 
 \subsection{Calibration}
 Modalità usata per calibrare al meglio la fotocamera e ottenere risultati i più veritieri possibili. Utile per svolgere al meglio il mini gioco descritto in seguito. Qui di sotto la sua schermata.
