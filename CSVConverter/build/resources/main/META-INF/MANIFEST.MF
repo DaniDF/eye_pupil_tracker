@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Main-Class: it.dani.MainFiftyoneKt
+Class-Path: kotlin-test-1.6.10.jar annotations-13.0.jar junit-jupiter-ap
+ i-5.8.1.jar junit-jupiter-params-5.8.1.jar kotlin-stdlib-common-1.6.10.
+ jar kotlin-test-junit5-1.6.10.jar junit-platform-commons-1.8.1.jar juni
+ t-jupiter-engine-5.8.1.jar kotlin-stdlib-jdk7-1.6.10.jar opentest4j-1.2
+ .0.jar junit-platform-engine-1.8.1.jar kotlin-stdlib-1.6.10.jar junit-j
+ upiter-5.8.1.jar kotlin-stdlib-jdk8-1.6.10.jar
+

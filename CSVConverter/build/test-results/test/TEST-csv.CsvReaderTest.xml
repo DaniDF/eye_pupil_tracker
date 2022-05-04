@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="csv.CsvReaderTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2022-02-25T18:15:25" hostname="DANIELE-PC" time="0.022">
+  <properties/>
+  <testcase name="next()" classname="csv.CsvReaderTest" time="0.02"/>
+  <testcase name="hasNext()" classname="csv.CsvReaderTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

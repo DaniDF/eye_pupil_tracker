@@ -1,6 +1,6 @@
 package csv
 
-import it.dani.csv.CsvLabelMapReader
+import it.dani.csv.fiftyone.CsvLabelMapReader
 import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.InputStreamReader

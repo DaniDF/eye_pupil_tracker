@@ -1,9 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: it.dani.MainKt
-Class-Path: kotlin-stdlib-1.6.10.jar junit-platform-commons-1.8.1.jar ko
- tlin-test-1.6.10.jar junit-jupiter-params-5.8.1.jar kotlin-test-junit5-
- 1.6.10.jar junit-jupiter-api-5.8.1.jar kotlin-stdlib-jdk7-1.6.10.jar ju
- nit-jupiter-engine-5.8.1.jar opentest4j-1.2.0.jar junit-platform-engine
- -1.8.1.jar kotlin-stdlib-jdk8-1.6.10.jar junit-jupiter-5.8.1.jar annota
- tions-13.0.jar kotlin-stdlib-common-1.6.10.jar
+Main-Class: it.dani.MainGi4eKt
 

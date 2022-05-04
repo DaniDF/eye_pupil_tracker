@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintWriter
 import java.lang.StringBuilder
+import javax.imageio.IIOException
 import javax.imageio.ImageIO
 
 /**
@@ -39,10 +40,10 @@ class XmlProducer(private val detectionsMap: Map<String, Data>, private val labe
      * This method produce a xml file for any images into [inputDir] folder according the [detectionsMap] and [labelMap]
      */
     fun produce() {
-        this.inputDir.listFiles { _, name -> name.endsWith(".jpg") }?.forEach { file ->
-            try {
-                val filename = file.name.substring(0,file.name.length - 4)
+        this.inputDir.listFiles { _, name -> name.endsWith(".jpg") || name.endsWith(".png") }?.forEach { file ->
+            val filename = file.name.substring(0,file.name.length - 4)
 
+            try {
                 this.detectionsMap[filename]?.let { data ->
                     PrintWriter(FileOutputStream("${this.outputDir.absolutePath}${File.separator}${filename}.xml"))
                         .use { fileOut ->
@@ -55,9 +56,9 @@ class XmlProducer(private val detectionsMap: Map<String, Data>, private val labe
                                 imageData,data.boxes,this.labelMap))
                         }
                 }
-            } catch (e : Exception) {
-                e.printStackTrace()
-                error("${file.absolutePath}${File.separator}${file.name}")
+            } catch (e : IIOException) {
+                System.err.println("Error at: ${file.absolutePath}")
+                File("${this.outputDir.absolutePath}${File.separator}${filename}.xml").delete()
             }
         }
     }

@@ -1,7 +1,7 @@
 package xml
 
-import it.dani.csv.CsvLabelDetectionsReader
-import it.dani.csv.CsvLabelMapReader
+import it.dani.csv.fiftyone.CsvLabelDetectionsReader
+import it.dani.csv.fiftyone.CsvLabelMapReader
 import it.dani.xml.XmlProducer
 import java.io.BufferedReader
 import java.io.File
