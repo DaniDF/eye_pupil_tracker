@@ -201,9 +201,9 @@
 \fancyfoot[L]{\thepage}
 \setcounter{page}{1}
 \section{Introduzione}
-Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando una rete neurale, sia in grado di riconoscere il volto dell’utente e di questo ultimo, anche i propri occhi. Il sistema sfrutterà un modello di rete neurale
-addestrato in modo tale da essere in grado di riconoscere i visi e gli occhi di uno o più utenti grazie ad un dataset di 10 mila immagini di visi umani.
-L’applicativo permetterà di svolgere un filtraggio "live", cioè aprendo la camera frontale ed esterna dello smartphone e individuando real-time gli occhi dell’utente.
+Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando una rete neurale, sia in grado di riconoscere gli occhi e le pupille dell'utente. Il sistema sfrutterà un modello di rete neurale
+addestrato in modo tale da essere in grado di riconoscere gli occhi e le pupille di uno o più utenti grazie ad un dataset di 10 mila immagini di visi umani ed ad un altro contenente 5 mila immagini di pupille.
+L’applicativo permetterà di svolgere un filtraggio "live", cioè aprendo la camera frontale ed esterna dello smartphone e individuando real-time gli occhi e le pupille dell’utente.
 \newline
 Inoltre, è stato implementato un gioco composto da un Quiz di 4 domande aiutato da un tool di calibrazione. L'utente tramite il riconoscitore di occhi è in grado di rispondere ad una certa domanda spostando, tramite gli occhi e il cellulare, un puntatore verso la risposta giusta posta ai 4 angoli del dispositivo. In caso di risposta corretta, viene posta un'ulteriore domanda, altrimenti si viene avvertiti della domanda sbagliata tramite un alert.
 \newline \newline
@@ -214,24 +214,27 @@ L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale pr
 \newpage
 
 \section{Rete Neurale}
-L’obiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. A tal scopo si è utilizzato un modello messo a disposizione dalla libreria \textit{TensorFlow 2 Detection Model Zoo} ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
-
-
-\subsection{Dataset}
-Per il training del modello si è utilizzato un dataset pubblico rilasciato da Google (LINK DA INSERIRE) contenente 10 mila immagini di visi umani, dove ogni foto conteneva da uno a più visi umani.
+L’obiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. Successivamente, si è prodotto un modello di rete neurale addestrata in grado di riconoscere le pupille degli esseri umani.
 \newline
-Oltre alle immagini il dataset conteneva un utile file Excel che indicava le coordinate della posizione degli occhi delle persone all'interno dell'immagine.
+A tal scopo si è utilizzato un modello messo a disposizione dalla libreria \textit{TensorFlow 2 Detection Model Zoo} ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
+
+\subsection{Eye Detection}
+\subsubsection{Dataset}
+Per il training del modello si è utilizzato un dataset pubblico rilasciato da Google contenente 10 mila immagini di visi umani, dove ogni foto conteneva da uno a più visi umani.
+\newline
+Oltre alle immagini il dataset conteneva un utile file \textit{Excel} che indicava le coordinate della posizione degli occhi delle persone all'interno dell'immagine.
 \newline \newline
-Prima dell'addestramento della rete era però necessario convertire questi dati di input in file XML in modo tale da poterli poi convertire in TFRecord, utili per TensorFlow. Per questo motivo è stato implementato uno script Java in grado di creare un file XML per ogni foto del dataset con al suo interno le informazioni geografiche della posizione degli occhi. 
-Inoltre, si è reso necessario compilare il file labelmap.pbtxt con al suo interno i nomi e gli id di nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "Human eye".
+Prima dell'addestramento della rete era però necessario convertire questi dati di input in file \textit{*.xml} in modo tale da poterli poi usare per generare i \textbf{TFRecord}, utili per TensorFlow. Per questo motivo è stato implementato uno script \textit{Java} in grado di creare un file \textit{.xml} per ogni foto del dataset estraendo le informazioni dal file \textit{Excel} le informazioni geografiche della posizione degli occhi e il nome del'oggetto da riconoscere. 
+Inoltre, per la corretta generazione dei \textbf{TFRecord}, si è reso necessario compilare il file \textit{labelmap.pbtxt} con al suo interno i nomi e gli id di nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "Human eye".
+
 \begin{figure}[h]
-\caption{labelmap.pbtxt}
+\caption{Eye Detection labelmap.pbtxt}
 \centering
 \includegraphics[scale=1]{img/item.png}
 \end{figure}
 
 
-\subsection{Training}
+\subsubsection{Training}
 Si è quindi proceduto all’addestramento della rete tramite Python usando TensorFlow e le API di Keras. Si è reso necessario modificare il file \textit{pipeline.config} adattandolo alle nostre esigenze: 
 \begin{itemize}
     \item \textit{numclasses} che corrisponde al numero di item da identificare;
@@ -273,19 +276,57 @@ personaggio pubblico, quello di Albert Einstein, e anche un'immagine contenente 
   \caption{Test multiplo}
   \label{fig:sfig2}
 \end{subfigure}
-\caption{Testing GUI TkAgg}
+\caption{Eye Testing GUI TkAgg}
 \label{fig:fig}
 \end{figure}
 
-\newpage
-\subsection{TFLite}
+
+\subsubsection{TfLite}
 Dopo esserci accertati che la rete funzionasse correttamente e avesse dei livelli di precisione sopra una certa soglia, si è ottenuto in output un modello addestrato
 e pronto all’uso, che poi è stato convertito e quantizzato in un formato adatto ai sistemi embedded, quello di TensorFlow Lite.
 \subsubsection{Metadata}
-Per un corretto funzionamento della rete neurale all'interno di Android, tflite richiede che venga generato anche un file Metadata che contiene le informazioni necessarie per pre-processare le immagini. Questo file si rende necessario in quanto i nostri tensori di input sono di tipo kTfLiteFloat32. 
+Per un corretto funzionamento della rete neurale all'interno di Android, TfLite richiede che venga generato anche un file Metadata che contiene le informazioni necessarie per pre-processare le immagini. Questo file si rende necessario in quanto i nostri tensori di input sono di tipo kTfLiteFloat32. È necessario creare un nuovo \textit{label\_map.txt} con al suo interno nella prima riga il nostro item per la detection: nel nostro caso \textit{"Human eye"}.
 \newline
 Una volta generato questo nuovo file metadata.tflite siamo pronti ad importarlo all'interno della nostra applicazione Android come file di Machine Learning "ml".
 
+\newpage    
+\subsection{Gaze Detection}
+
+\subsubsection{Dataset}
+Per il training del modello si è utilizzato un dataset pubblico rilasciato da Kaggle\footnote{https://www.kaggle.com/datasets/pavelbiz/eyes-rtte} contenente 5 mila immagini di sole pupille umane, comodo per il raggiungimento del nostro obiettivo di gaze detection.
+\newline
+Questa volta, per ottenere i file \textit{*.xml} di ogni immagine, abbiamo usufruito di un tool grafico chiamato \textbf{LabelImage}, scaricabile gratuitamente su Github\footnote{https://github.com/tzutalin/labelImg}. Questo tool ci permetteva di costruire i boxes attorno alla pupilla ottenendo in output per ogni immagine un file \textit{*.xml} contenente le informazioni necessarie: come il nome dell'oggetto su cui si è costruito attorno il box ("gaze"), e le relative coordinate geografiche dei 4 punti del box (xmin, ymin, xmax, ymax)
+\newline \newline
+Prima dell'addestramento della rete era però necessario, usando questi nuovi dati \textit{*.xml}, generare i \textbf{TFRecord}, utili per TensorFlow.
+Inoltre, per la corretta generazione dei \textbf{TFRecord}, si è reso necessario compilare il file \textit{labelmap.pbtxt} con al suo interno i nomi e gli id di nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "gaze".
+
+\begin{figure}[h]
+\caption{Gaze Detection labelmap.pbtxt}
+\centering
+\includegraphics[scale=1]{img/item2.png}
+\end{figure}
+
+\subsubsection{Training}
+Per quanto riguarda il Training, abbiamo effettuato le stesse scelte effettuate per l'eye detection.
+\newline
+Prima di testare direttamente su Android, anche in questo caso abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib e usando \textbf{Tkinter}.
+\newline
+\newline
+A fini di testing si è preso ad esempio l'occhio qui sotto:
+
+\begin{figure}[h]
+\caption{Gaze Testing GUI TkAgg }
+\centering
+\includegraphics[scale=0.18]{img/pupilla.png}
+\end{figure}
+
+\subsubsection{TfLite}
+Seguendo gli stessi identici procedimenti eseguiti durante la conversione dell'eye detection, anche qui dopo esserci accertati che la rete funzionasse correttamente e avesse dei livelli di precisione sopra una certa soglia, si è ottenuto in output un modello addestrato
+e pronto all’uso, che poi è stato convertito e quantizzato in un formato adatto ai sistemi embedded, quello di TensorFlow Lite.
+\subsubsection{Metadata}
+Per un corretto funzionamento della rete neurale all'interno di Android, TfLite richiede che venga generato anche un file Metadata che contiene le informazioni necessarie per pre-processare le immagini. Questo file si rende necessario in quanto i nostri tensori di input sono di tipo kTfLiteFloat32. È necessario creare un nuovo \textit{label\_map.txt} con al suo interno nella prima riga il nostro item per la detection: nel nostro caso \textit{"gaze"}.
+\newline
+Una volta generato questo nuovo file metadata.tflite siamo pronti ad importarlo all'interno della nostra applicazione Android come file di Machine Learning "ml".
 
 \newpage
 \section{Progetto Android}
