@@ -1,3 +1,7 @@
 Manifest-Version: 1.0
+<<<<<<< HEAD
 Main-Class: it.dani.MainGi4eKt
+=======
+Main-Class: it.dani.MainFiftyoneKt
+>>>>>>> 8ef4cb5c15a6dba7544bffa0bdbe14b59fe59dcd
 
