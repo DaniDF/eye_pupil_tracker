@@ -1,10 +1,7 @@
 # Eye&Gaze Tracker
 
-## Authors
+![merge](https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/merge.jpg)
 
-+ Luigi di Nuzzo @[luigidinuzzo](https://github.com/luigidinuzzo)
-+ Daniele Foschi @[DaniDF](https://github.com/DaniDF)
-+ Filippo Veronesi @[filippoveronesi](https://github.com/filippoveronesi)
 
 
 ## Jupiter Notebook
@@ -23,3 +20,9 @@
 [lk_rt]: https://github.com/luigidinuzzo/sistemiDigitali2022/tree/master/Remote_training "Remote training"
 [lk_rp]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/Report "Report"
 [lk_tf]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/Models/tflite "Models"
+
+## Authors
+
++ Luigi di Nuzzo @[luigidinuzzo](https://github.com/luigidinuzzo)
++ Daniele Foschi @[DaniDF](https://github.com/DaniDF)
++ Filippo Veronesi @[filippoveronesi](https://github.com/filippoveronesi)
