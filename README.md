@@ -1,4 +1,4 @@
-# Eye tracking
+# Eye&Gaze Tracker
 
 ## Authors
 
