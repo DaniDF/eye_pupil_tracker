@@ -45,21 +45,21 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
     private lateinit var rightEye : Pair<Float,Float>
 
     init {
-        objectDetection.onSuccess += {
+        objectDetection.onSuccess += { _, eyes ->
             try {
                 if(!this::leftEye.isInitialized) {
-                    this.leftEye = this.findLeftEye(it)
+                    this.leftEye = this.findLeftEye(eyes)
                 }
 
                 if(!this::rightEye.isInitialized) {
-                    this.rightEye = this.findRightEye(it)
+                    this.rightEye = this.findRightEye(eyes)
                 }
 
                 val previousLeftEye = this.leftEye
-                this.leftEye = this.findLeftEye(it)
+                this.leftEye = this.findLeftEye(eyes)
 
                 val previousRightEye = this.rightEye
-                this.rightEye = this.findRightEye(it)
+                this.rightEye = this.findRightEye(eyes)
 
                 this.detectMotion(previousLeftEye,this.leftEye, previousRightEye, this.rightEye)
             } catch (e : IllegalEyeDetectionException) {

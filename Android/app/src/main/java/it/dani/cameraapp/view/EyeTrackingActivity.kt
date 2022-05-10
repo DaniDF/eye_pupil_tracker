@@ -25,6 +25,8 @@ import it.dani.cameraapp.camera.*
 import it.dani.cameraapp.view.utils.PermissionUtils
 import java.lang.StringBuilder
 import java.util.concurrent.Executors
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * @author Daniele
@@ -38,6 +40,7 @@ class EyeTrackingActivity : AppCompatActivity() {
      * @property[beenAskedPermission] Remember if is the first time asking for permissions
      */
     private var beenAskedPermission = false
+    private lateinit var pupilTrackingDetector: PupilTrackingDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,11 +129,9 @@ class EyeTrackingActivity : AppCompatActivity() {
             else -> adjustDflFunc
         }
 
-        val analyzer : ObjectDetection = EyeTrackingDetector(this).apply {
-            onSuccess += {
-                runOnUiThread {
-                    this@EyeTrackingActivity.manageAnalyzedObjs(it,adjustFunc)
-                }
+        val eyeAnalyzer : ObjectDetection = EyeTrackingDetector(this).apply {
+            onSuccess += { bitmap, eyes ->
+                this@EyeTrackingActivity.manageAnalyzedEyes(bitmap,eyes,adjustFunc)
             }
 
             var handler : (Int,Int) -> Unit = {_,_->}
@@ -156,10 +157,10 @@ class EyeTrackingActivity : AppCompatActivity() {
         }
 
         findViewById<Slider>(R.id.accuracy_slider).apply {
-            value = analyzer.accuracyThreshold * 100
+            value = eyeAnalyzer.accuracyThreshold * 100
 
             addOnChangeListener { _, value, _ ->
-                analyzer.apply {
+                eyeAnalyzer.apply {
                     accuracyThreshold = value / 100
                 }
             }
@@ -232,7 +233,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             }
         }
 
-        analysis.setAnalyzer(Executors.newCachedThreadPool(),analyzer)
+        analysis.setAnalyzer(Executors.newCachedThreadPool(),eyeAnalyzer)
 
         cameraProvider.unbindAll()
     }
@@ -250,19 +251,106 @@ class EyeTrackingActivity : AppCompatActivity() {
     /**
      * This method display on a preview view the founds detections
      *
-     * @param[objs] A list of detected objects
+     * @param[eyes] A list of detected objects
      * @param[adjustFunc] A function for mirroring the result is currently used camera is front camera
      */
-    private fun manageAnalyzedObjs(objs : List<DetectedObject>, adjustFunc : (BoundingBox) -> BoundingBox) {
-        val analyzeView = findViewById<ConstraintLayout>(R.id.analyze_view).apply { removeAllViews() }
-        val textLabelView = findViewById<LinearLayout>(R.id.text_label_view).apply { removeAllViews() }
+    private fun manageAnalyzedEyes(bitmap: Bitmap, eyes : List<DetectedObject>, adjustFunc : (BoundingBox) -> BoundingBox) {
+        val analyzeView = findViewById<ConstraintLayout>(R.id.analyze_view)
+        val textLabelView = findViewById<LinearLayout>(R.id.text_label_view)
 
-        var count = 0
-        objs.forEach { obj ->
+        runOnUiThread {
+            analyzeView.apply { removeAllViews() }
+            textLabelView.apply { removeAllViews() }
+        }
+
+        eyes.forEachIndexed { index, obj ->
 
             Log.d("Detected_OBJ", obj.stringObjs())
 
-            if(count++ < 5) {
+            if(index < 5) {
+
+                val width = min(analyzeView.width,analyzeView.height)
+                val height = max(analyzeView.width,analyzeView.height)
+
+                val newBitmap = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888)
+
+                val canvas = Canvas(newBitmap)
+                val boundingBox = adjustFunc(obj.boundingBox)
+
+                val rectF = Rect((boundingBox.left.coerceAtMost(1.0f) * canvas.width).toInt(),
+                    (boundingBox.top.coerceAtMost(1.0f) * canvas.height).toInt(),
+                    (boundingBox.right.coerceAtMost(1.0f) * canvas.width).toInt(),
+                    (boundingBox.bottom.coerceAtMost(1.0f) * canvas.height).toInt())
+
+                canvas.drawRect(rectF,Paint().apply {
+                    color = this@EyeTrackingActivity.getAnalyzeColor(index)
+                    strokeWidth = 10f
+                    style = Paint.Style.STROKE
+                })
+
+                val imageView = ImageView(this@EyeTrackingActivity).apply {
+                    setImageBitmap(newBitmap)
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                }
+
+                val logVal = StringBuilder("[")
+
+                for(ll in obj.labels) {
+                    logVal.append("${ll.label} ${ll.score}")
+                }
+
+                logVal.append("]\n")
+
+                val textView = TextView(this@EyeTrackingActivity).apply {
+                    text = logVal.toString()
+                    setTextColor(this@EyeTrackingActivity.getAnalyzeColor(index))
+                    setTypeface(null, Typeface.BOLD)
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+
+                }
+
+                if(!this::pupilTrackingDetector.isInitialized) {
+                    this.pupilTrackingDetector = PupilTrackingDetector(this)
+                }
+
+                try {
+                    val x = (boundingBox.left * bitmap.width).toInt()
+                    val y = (boundingBox.top * bitmap.height).toInt()
+                    val bitmapWidth = ((boundingBox.right - boundingBox.left) * bitmap.width).toInt()
+                    val bitmapHeight = ((boundingBox.bottom - boundingBox.top) * bitmap.height).toInt()
+                    val croppedBitmap = Bitmap.createBitmap(bitmap,x,y,bitmapWidth,bitmapHeight)
+                    this.manageAnalyzedPupils(this.pupilTrackingDetector.analyze(croppedBitmap)) {
+                        BoundingBox(
+                            boundingBox.left + (boundingBox.right - boundingBox.left) * it.left,
+                            boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.top,
+                            boundingBox.right - (boundingBox.right - boundingBox.left) * it.right,
+                            boundingBox.bottom - (boundingBox.bottom - boundingBox.top) * it.bottom
+                        )
+                    }
+                } catch (e : IllegalArgumentException) {}
+
+                runOnUiThread {
+                    analyzeView.addView(imageView)
+                    textLabelView.addView(textView)
+                }
+            }
+        }
+    }
+
+    private fun manageAnalyzedPupils(pupils : List<DetectedObject>, adjustFunc : (BoundingBox) -> BoundingBox) {
+        val analyzeView = findViewById<ConstraintLayout>(R.id.analyze_view)
+
+        pupils.forEachIndexed { index, obj ->
+
+            Log.d("Detected_OBJ", obj.stringObjs())
+
+            if(index < 1) {
 
                 val width = analyzeView.width
                 val height = analyzeView.height
@@ -278,7 +366,7 @@ class EyeTrackingActivity : AppCompatActivity() {
                     (boundingBox.bottom.coerceAtMost(1.0f) * canvas.height).toInt())
 
                 canvas.drawRect(rectF,Paint().apply {
-                    color = this@EyeTrackingActivity.getAnalyzeColor(count)
+                    color = this@EyeTrackingActivity.getAnalyzeColor(index)
                     strokeWidth = 10f
                     style = Paint.Style.STROKE
                 })
@@ -291,26 +379,9 @@ class EyeTrackingActivity : AppCompatActivity() {
                     )
                 }
 
-                val logVal = StringBuilder("[")
-
-                for(ll in obj.labels) {
-                    logVal.append("${ll.label} ${ll.score}")
+                runOnUiThread {
+                    analyzeView.addView(imageView)
                 }
-
-                logVal.append("]\n")
-
-                analyzeView.addView(imageView)
-                val textView = TextView(this@EyeTrackingActivity).apply {
-                    text = logVal.toString()
-                    setTextColor(this@EyeTrackingActivity.getAnalyzeColor(count))
-                    setTypeface(null, Typeface.BOLD)
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-
-                }
-                textLabelView.addView(textView)
             }
         }
     }

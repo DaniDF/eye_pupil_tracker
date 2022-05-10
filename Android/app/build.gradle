@@ -10,8 +10,8 @@ android {
         applicationId "it.dani.cameraapp"
         minSdk 21
         targetSdk 31
-        versionCode 22
-        versionName "1.3.2"
+        versionCode 23
+        versionName "2.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,13 +35,14 @@ android {
     androidResources {
         noCompress 'tflite'
     }
+    namespace 'it.dani.cameraapp'
 }
 
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
     implementation 'androidx.camera:camera-core:1.0.2'

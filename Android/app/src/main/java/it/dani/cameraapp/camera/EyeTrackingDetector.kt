@@ -2,6 +2,7 @@ package it.dani.cameraapp.camera
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.camera.core.ImageProxy
 import it.dani.cameraapp.camera.ImageUtils.rotateBitmap
@@ -58,29 +59,37 @@ class EyeTrackingDetector(context: Context) : ObjectDetection() {
 
             val bitmap = img.toBitmap()
             val rotatedBitmap = bitmap.rotateBitmap(image.imageInfo.rotationDegrees.toFloat())
-            val tensorImage = TensorImage.fromBitmap(rotatedBitmap)
 
-            val outputs = this.objectDetector.process(tensorImage)
-
-            Log.d("ANALYZER","Found: something [objects: ${outputs.detectionResultList.size}]")
-
-            val result : MutableList<DetectedObject> = ArrayList()
-            outputs.detectionResultList.forEachIndexed { i,d ->
-                if(d.scoreAsFloat >= this.accuracyThreshold) {
-                    val boundingBox = BoundingBox((d.locationAsRectF.left*1.0f)/width,
-                        (d.locationAsRectF.top*1.0f)/height,
-                        (d.locationAsRectF.right*1.0f)/width,
-                        (d.locationAsRectF.bottom*1.0f)/height)
-
-                    result += DetectedObject(boundingBox,i, listOf(Category(d.categoryAsString,d.scoreAsFloat)))
-                }
-            }
+            val result = this.analyze(rotatedBitmap)
+            Log.d("ANALYZER","Found: something [objects: ${result.size}]")
 
             this@EyeTrackingDetector.onGiveImageSize.forEach { it(width,height) }
-            this@EyeTrackingDetector.onSuccess.forEach { it(result.sortedByDescending { it.labels.averageScore()}) }
+            this@EyeTrackingDetector.onSuccess.forEach { it(rotatedBitmap,result.sortedByDescending { it.labels.averageScore()}) }
 
             img.close()
             image.close()
         }
+    }
+
+    override fun analyze(bitmap : Bitmap) : List<DetectedObject> {
+        val width = minOf(bitmap.width,bitmap.height)
+        val height = maxOf(bitmap.width,bitmap.height)
+
+        val tensorImage = TensorImage.fromBitmap(bitmap)
+        val outputs = this.objectDetector.process(tensorImage)
+
+        val result : MutableList<DetectedObject> = ArrayList()
+        outputs.detectionResultList.forEachIndexed { i,d ->
+            if(d.scoreAsFloat >= this.accuracyThreshold) {
+                val boundingBox = BoundingBox((d.locationAsRectF.left*1.0f)/width,
+                    (d.locationAsRectF.top*1.0f)/height,
+                    (d.locationAsRectF.right*1.0f)/width,
+                    (d.locationAsRectF.bottom*1.0f)/height)
+
+                result += DetectedObject(boundingBox,i, listOf(Category(d.categoryAsString,d.scoreAsFloat)))
+            }
+        }
+
+        return result
     }
 }

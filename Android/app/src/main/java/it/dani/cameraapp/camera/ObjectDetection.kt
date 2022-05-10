@@ -1,5 +1,6 @@
 package it.dani.cameraapp.camera
 
+import android.graphics.Bitmap
 import androidx.camera.core.ImageAnalysis
 import org.tensorflow.lite.support.label.Category
 
@@ -13,7 +14,7 @@ abstract class ObjectDetection : ImageAnalysis.Analyzer {
     /**
      * @property[onSuccess] List of handlers on, they will be fired on successfully detection
      */
-    val onSuccess : MutableList<(List<DetectedObject>) -> Any> = ArrayList()
+    val onSuccess : MutableList<(bitmap : Bitmap, List<DetectedObject>) -> Any> = ArrayList()
 
     /**
      * @property[onGiveImageSize] List of handlers for deliver the current image (sensor) dimensions
@@ -24,6 +25,14 @@ abstract class ObjectDetection : ImageAnalysis.Analyzer {
      * @property[accuracyThreshold] Threshold for detections' accuracy, under will not given
      */
     var accuracyThreshold = ACCURACY_THRESHOLD
+
+    /**
+     * This method compute the incoming bitmap and returns a list of [DetectedObject]
+     *
+     * @param[bitmap] The bitmap image to analyze
+     * @return A list of [DetectedObject] containing the detected object in the bitmap
+     */
+    abstract fun analyze(bitmap : Bitmap) : List<DetectedObject>
 
     companion object {
         /**

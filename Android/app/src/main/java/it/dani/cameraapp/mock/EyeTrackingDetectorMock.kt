@@ -1,9 +1,12 @@
 package it.dani.cameraapp.mock
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import androidx.camera.core.ImageProxy
 import it.dani.cameraapp.camera.BoundingBox
 import it.dani.cameraapp.camera.DetectedObject
+import it.dani.cameraapp.camera.ImageUtils.rotateBitmap
+import it.dani.cameraapp.camera.ImageUtils.toBitmap
 import it.dani.cameraapp.camera.ObjectDetection
 import org.tensorflow.lite.support.label.Category
 
@@ -35,45 +38,54 @@ class EyeTrackingDetectorMock : ObjectDetection() {
         if(System.currentTimeMillis() - this.oldTime > 10000) {
             this.oldTime = System.currentTimeMillis()
 
-            val boundingBoxL = BoundingBox(
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first,
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second,
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH,
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second + BOX_HEIGHT
-            )
-            val detectedObjectL = DetectedObject(
-                boundingBoxL,
-                this.currentPosition, mutableListOf(Category("Eye L Mock",1.0f))
-            )
-
-            val boundingBoxR = BoundingBox(
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH,
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second,
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH + BOX_WIDTH,
-                POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second + BOX_HEIGHT
-            )
-            val detectedObjectR = DetectedObject(
-                boundingBoxR,
-                this.currentPosition, mutableListOf(Category("Eye R Mock",1.0f))
-            )
-
-            if(this.currentPosition+1 < POSITIONS.size) {
-                this.currentPosition++
-            } else {
-                this.currentPosition = 0
-            }
+            val (detectedObjectL,detectedObjectR) = this.analyze(Bitmap.createBitmap(1,1,Bitmap.Config.ARGB_8888))
 
             image.image?.let { img ->
                 //val inputImage = InputImage.fromMediaImage(img,image.imageInfo.rotationDegrees)
                 val width = minOf(img.width,img.height)
                 val height = maxOf(img.width,img.height)
-                super.onGiveImageSize.forEach { it(width,height) }
-            }
 
-            super.onSuccess.forEach { it(listOf(detectedObjectL,detectedObjectR)) }
+                val bitmap = img.toBitmap()
+                val rotatedBitmap = bitmap.rotateBitmap(image.imageInfo.rotationDegrees.toFloat())
+
+                this.onGiveImageSize.forEach { it(width,height) }
+                this.onSuccess.forEach { it(rotatedBitmap,listOf(detectedObjectL,detectedObjectR)) }
+            }
         }
 
         image.close()
+    }
+
+    override fun analyze(bitmap: Bitmap): List<DetectedObject> {
+        val boundingBoxL = BoundingBox(
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first,
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second,
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH,
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second + BOX_HEIGHT
+        )
+        val detectedObjectL = DetectedObject(
+            boundingBoxL,
+            this.currentPosition, mutableListOf(Category("Eye L Mock",1.0f))
+        )
+
+        val boundingBoxR = BoundingBox(
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH,
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second,
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].first + BOX_WIDTH + BOX_WIDTH,
+            POSITIONS[this@EyeTrackingDetectorMock.currentPosition].second + BOX_HEIGHT
+        )
+        val detectedObjectR = DetectedObject(
+            boundingBoxR,
+            this.currentPosition, mutableListOf(Category("Eye R Mock",1.0f))
+        )
+
+        if(this.currentPosition+1 < POSITIONS.size) {
+            this.currentPosition++
+        } else {
+            this.currentPosition = 0
+        }
+
+        return listOf(detectedObjectL,detectedObjectR)
     }
 
     companion object {
