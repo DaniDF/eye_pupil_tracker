@@ -129,7 +129,7 @@ class EyeTrackingActivity : AppCompatActivity() {
             else -> adjustDflFunc
         }
 
-        val eyeAnalyzer : ObjectDetection = EyeTrackingDetector(this).apply {
+        val eyeAnalyzer : ObjectDetector = EyeTrackingDetector(this).apply {
             onSuccess += { bitmap, eyes ->
                 this@EyeTrackingActivity.manageAnalyzedEyes(bitmap,eyes,adjustFunc)
             }
@@ -315,6 +315,11 @@ class EyeTrackingActivity : AppCompatActivity() {
 
                 }
 
+                runOnUiThread {
+                    analyzeView.addView(imageView)
+                    textLabelView.addView(textView)
+                }
+
                 if(!this::pupilTrackingDetector.isInitialized) {
                     this.pupilTrackingDetector = PupilTrackingDetector(this)
                 }
@@ -327,18 +332,13 @@ class EyeTrackingActivity : AppCompatActivity() {
                     val croppedBitmap = Bitmap.createBitmap(bitmap,x,y,bitmapWidth,bitmapHeight)
                     this.manageAnalyzedPupils(this.pupilTrackingDetector.analyze(croppedBitmap)) {
                         BoundingBox(
-                            boundingBox.left + (boundingBox.right - boundingBox.left) * it.left,
-                            boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.top,
-                            boundingBox.right - (boundingBox.right - boundingBox.left) * it.right,
-                            boundingBox.bottom - (boundingBox.bottom - boundingBox.top) * it.bottom
+                            (boundingBox.left + (boundingBox.right - boundingBox.left) * it.left).coerceAtLeast(boundingBox.left).coerceAtMost(boundingBox.right),
+                            (boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.top).coerceAtLeast(boundingBox.top).coerceAtMost(boundingBox.bottom),
+                            (boundingBox.left + (boundingBox.right - boundingBox.left) * it.right).coerceAtLeast(boundingBox.left).coerceAtMost(boundingBox.right),
+                            (boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.bottom).coerceAtLeast(boundingBox.top).coerceAtMost(boundingBox.bottom)
                         )
                     }
                 } catch (e : IllegalArgumentException) {}
-
-                runOnUiThread {
-                    analyzeView.addView(imageView)
-                    textLabelView.addView(textView)
-                }
             }
         }
     }

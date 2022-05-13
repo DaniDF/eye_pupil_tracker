@@ -15,9 +15,9 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.CameraManager
-import it.dani.cameraapp.camera.ObjectDetection
+import it.dani.cameraapp.camera.ObjectDetector
 import it.dani.cameraapp.mock.EyeTrackingDetectorMock
-import it.dani.cameraapp.motion.EyeMotionDetector
+import it.dani.cameraapp.motion.GazeMotionDetector
 import it.dani.cameraapp.view.utils.PermissionUtils
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -124,40 +124,40 @@ class CalibrationActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val analyzer : ObjectDetection = EyeTrackingDetectorMock()
+        val analyzer : ObjectDetector = EyeTrackingDetectorMock()
 
         this.animationThread = this.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tl)))
 
-        EyeMotionDetector(analyzer).apply {
-            var eyesLeft : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
-            var eyesRight : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
-            var eyesUp : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
-            var eyesDown : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
+        GazeMotionDetector(analyzer).apply {
+            var gazeLeft : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
+            var gazeRight : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
+            var gazeUp : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
+            var gazeDown : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
 
-            eyesRight = { _, _ ->
+            gazeRight = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tr)))
-                onEyeRight -= eyesRight
+                onGazeRight -= gazeRight
             }
-            eyesDown = { _, _ ->
+            gazeDown = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_br)))
-                onEyeDown -= eyesDown
+                onGazeDown -= gazeDown
             }
-            eyesLeft = { _, _ ->
+            gazeLeft = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_bl)))
-                onEyeLeft -= eyesLeft
+                onGazeLeft -= gazeLeft
             }
-            eyesUp = { _, _ ->
+            gazeUp = { _, _ ->
                 this@CalibrationActivity.animationThread.shutdownNow()
-                onEyeUp -= eyesUp
+                onGazeUp -= gazeUp
             }
 
-            onEyeLeft += eyesLeft
-            onEyeRight += eyesRight
-            onEyeUp += eyesUp
-            onEyeDown += eyesDown
+            onGazeLeft += gazeLeft
+            onGazeRight += gazeRight
+            onGazeUp += gazeUp
+            onGazeDown += gazeDown
         }
 
         analysis.setAnalyzer(Executors.newSingleThreadExecutor(),analyzer)

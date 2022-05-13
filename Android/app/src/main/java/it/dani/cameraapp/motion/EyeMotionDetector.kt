@@ -2,17 +2,17 @@ package it.dani.cameraapp.motion
 
 import android.util.Log
 import it.dani.cameraapp.camera.DetectedObject
-import it.dani.cameraapp.camera.ObjectDetection
+import it.dani.cameraapp.camera.ObjectDetector
 
 /**
  * @author Daniele
  *
- * This class wrap an [ObjectDetection] used for detect the eye movements
+ * This class wrap an [ObjectDetector] used for detect the eye movements
  *
- * @param[objectDetection] The object detection object
+ * @param[objectDetector] The object detection object
  */
 
-class EyeMotionDetector(objectDetection: ObjectDetection) {
+class EyeMotionDetector(objectDetector: ObjectDetector) {
 
     /**
      * @property[onEyeLeft] List of handler fired when eyes move to left
@@ -45,7 +45,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
     private lateinit var rightEye : Pair<Float,Float>
 
     init {
-        objectDetection.onSuccess += { _, eyes ->
+        objectDetector.onSuccess += { _, eyes ->
             try {
                 if(!this::leftEye.isInitialized) {
                     this.leftEye = this.findLeftEye(eyes)
@@ -62,7 +62,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
                 this.rightEye = this.findRightEye(eyes)
 
                 this.detectMotion(previousLeftEye,this.leftEye, previousRightEye, this.rightEye)
-            } catch (e : IllegalEyeDetectionException) {
+            } catch (e : IllegalDetectionException) {
                 Log.d("Eye_calibration","no eye detected")
             }
         }
@@ -93,7 +93,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
      */
     private fun findLeftEye(eyes : List<DetectedObject>) : Pair<Float,Float> {
         if(eyes.isEmpty()) {
-            throw IllegalEyeDetectionException("Error: no eye provided")
+            throw IllegalDetectionException("Error: no eye provided")
         }
 
         var result = eyes[0].boundingBox.left to eyes[0].boundingBox.top
@@ -113,7 +113,7 @@ class EyeMotionDetector(objectDetection: ObjectDetection) {
      */
     private fun findRightEye(eyes : List<DetectedObject>) : Pair<Float,Float> {
         if(eyes.isEmpty()) {
-            throw IllegalEyeDetectionException("Error: no eye provided")
+            throw IllegalDetectionException("Error: no eye provided")
         }
 
         var result = eyes[0].boundingBox.left to eyes[0].boundingBox.top

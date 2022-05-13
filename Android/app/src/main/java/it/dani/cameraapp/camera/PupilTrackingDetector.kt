@@ -7,7 +7,7 @@ import android.util.Log
 import androidx.camera.core.ImageProxy
 import it.dani.cameraapp.camera.ImageUtils.rotateBitmap
 import it.dani.cameraapp.camera.ImageUtils.toBitmap
-import it.dani.cameraapp.ml.GazeF16ConvertedModelDflMetadata
+import it.dani.cameraapp.ml.GazeF16Metadata
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.label.Category
@@ -17,12 +17,12 @@ import kotlin.collections.ArrayList
 /**
  * @author Daniele
  *
- * This class extends [ObjectDetection], is dedicated to detect pupil on an image
+ * This class extends [ObjectDetector], is dedicated to detect pupil on an image
  *
  * (n.b. this class is an another version of [PupilTrackingDetector])
  */
 
-class PupilTrackingDetector(context: Context) : ObjectDetection() {
+class PupilTrackingDetector(context: Context) : ObjectDetector() {
 
     /**
      * @property[objectDetector] The object detector object
@@ -36,12 +36,12 @@ class PupilTrackingDetector(context: Context) : ObjectDetection() {
             }
         }
 
-        GazeF16ConvertedModelDflMetadata.newInstance(context,customObjectDetectorOptions)
+        GazeF16Metadata.newInstance(context,customObjectDetectorOptions)
     } catch (e : IllegalArgumentException) {
         Log.e("GPU_delegate", "Error: GPU does not support this operations")
 
         val customObjectDetectorOptions = Model.Options.Builder().setNumThreads(4).build()
-        GazeF16ConvertedModelDflMetadata.newInstance(context, customObjectDetectorOptions)
+        GazeF16Metadata.newInstance(context, customObjectDetectorOptions)
     }
 
 

@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import it.dani.cameraapp.EyeTrackingActivityTest
 import it.dani.cameraapp.R
 import it.dani.cameraapp.view.sensor.GyroscopeListener
 import it.dani.cameraapp.view.utils.ViewUtils
@@ -64,7 +65,8 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.calibrationButton).apply {
             setOnClickListener {
-                val intent = Intent(this@MainActivity, CalibrationActivity::class.java)
+                //val intent = Intent(this@MainActivity, CalibrationActivity::class.java)
+                val intent = Intent(this@MainActivity, EyeTrackingActivityTest::class.java)
                 this@MainActivity.startActivity(intent)
 
                 this.setOnClickListener {  }
