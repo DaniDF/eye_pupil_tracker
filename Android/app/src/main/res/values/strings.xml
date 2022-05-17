@@ -22,6 +22,7 @@
     <string name="analyze_image_button_start">Analyze</string>
     <string name="analyze_image_button_stop">Stop</string>
     <string name="analyze_image_switch_camera">Switch camera</string>
+    <string name="analyze_image_enable_pupil_button">Enable pupil detection</string>
     <string name="analyze_image_accuracy_slider">Accuracy threshold</string>
 
     <string name="game_question_default"> </string>

@@ -10,9 +10,10 @@ import java.util.concurrent.Executors
  *
  * This class wrap an [ObjectDetector] used for detect the gaze movements
  *
- * @param[objectDetection] The object detection object
+ * @param[eyeObjectDetection] An object detection that finds eyes in an image
+ * @param[pupilObjectDetection] An object detection that finds pupil in an image
  */
-class GazeMotionDetector(objectDetection: ObjectDetector) {
+class GazeMotionDetector(eyeObjectDetection: ObjectDetector,pupilObjectDetection: ObjectDetector) {
 
     /**
      * @property[leftLimit] //TODO
@@ -55,13 +56,26 @@ class GazeMotionDetector(objectDetection: ObjectDetector) {
     val onGazeDown : MutableList<(Pair<Float,Float>,Pair<Float,Float>) -> Any> = ArrayList()
 
     init {
-        objectDetection.onSuccess += { bitmap, eyes ->
+        val sortPupils : (Pair<Pair<Float,Float>,Pair<Float,Float>>) -> Pair<Pair<Float,Float>,Pair<Float,Float>> = {
+            if(it.first.first < it.second.first) {
+                it
+            } else if (it.first.first > it.second.first) {
+                it.second to it.first
+            } else {
+                if(it.first.second > it.second.second) {
+                    (it.second) to (it.first)
+                } else {
+                    it
+                }
+            }
+        }
+
+        eyeObjectDetection.onSuccess += { bitmap, eyes ->
             if(eyes.size >= 2) {
                 Executors.newSingleThreadExecutor().also {
                     it.execute {
                         try {
-                            val firstPupil = this.findPupil(bitmap,eyes[0],objectDetection)
-                            val secondPupil = this.findPupil(bitmap,eyes[1],objectDetection)
+                            val (firstPupil,secondPupil) = sortPupils(this.findPupil(bitmap,eyes[0],pupilObjectDetection) to this.findPupil(bitmap,eyes[1],pupilObjectDetection))
 
                             if(firstPupil.first <= this.leftLimit || secondPupil.first <= this.leftLimit) {
                                 this.onGazeLeft.forEach { it(firstPupil,secondPupil) }

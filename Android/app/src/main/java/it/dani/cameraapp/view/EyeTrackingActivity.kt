@@ -25,6 +25,7 @@ import it.dani.cameraapp.camera.*
 import it.dani.cameraapp.view.utils.PermissionUtils
 import java.lang.StringBuilder
 import java.util.concurrent.Executors
+import java.util.concurrent.Semaphore
 import kotlin.math.max
 import kotlin.math.min
 
@@ -40,6 +41,19 @@ class EyeTrackingActivity : AppCompatActivity() {
      * @property[beenAskedPermission] Remember if is the first time asking for permissions
      */
     private var beenAskedPermission = false
+
+    /**
+     * @property[findPupils] Remember the user choice about enabling or not the pupil detector. To check this value use [checkFindPupils]
+     */
+    private var findPupils = true
+    /**
+     * @property[findPupilsSemaphore] Mutex for the property [findPupils]
+     */
+    private val findPupilsSemaphore = Semaphore(1)
+
+    /**
+     * @property[pupilTrackingDetector] The object detector that finds the pupil in given image
+     */
     private lateinit var pupilTrackingDetector: PupilTrackingDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -154,6 +168,15 @@ class EyeTrackingActivity : AppCompatActivity() {
                 onGiveImageSize -= handler
             }
             onGiveImageSize += handler
+        }
+
+        findViewById<FloatingActionButton>(R.id.pupil_detector_button).apply {
+            setOnClickListener {
+                when(this@EyeTrackingActivity.toggleFindPupils()) {
+                    true -> setImageResource(R.drawable.ic_pupil_on)
+                    false -> setImageResource(R.drawable.ic_pupil_off)
+                }
+            }
         }
 
         findViewById<Slider>(R.id.accuracy_slider).apply {
@@ -325,24 +348,32 @@ class EyeTrackingActivity : AppCompatActivity() {
                 }
 
                 try {
-                    val x = (boundingBox.left * bitmap.width).toInt()
-                    val y = (boundingBox.top * bitmap.height).toInt()
-                    val bitmapWidth = ((boundingBox.right - boundingBox.left) * bitmap.width).toInt()
-                    val bitmapHeight = ((boundingBox.bottom - boundingBox.top) * bitmap.height).toInt()
-                    val croppedBitmap = Bitmap.createBitmap(bitmap,x,y,bitmapWidth,bitmapHeight)
-                    this.manageAnalyzedPupils(this.pupilTrackingDetector.analyze(croppedBitmap)) {
-                        BoundingBox(
-                            (boundingBox.left + (boundingBox.right - boundingBox.left) * it.left).coerceAtLeast(boundingBox.left).coerceAtMost(boundingBox.right),
-                            (boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.top).coerceAtLeast(boundingBox.top).coerceAtMost(boundingBox.bottom),
-                            (boundingBox.left + (boundingBox.right - boundingBox.left) * it.right).coerceAtLeast(boundingBox.left).coerceAtMost(boundingBox.right),
-                            (boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.bottom).coerceAtLeast(boundingBox.top).coerceAtMost(boundingBox.bottom)
-                        )
+                    if(this.checkFindPupils()) {
+                        val x = (boundingBox.left * bitmap.width).toInt()
+                        val y = (boundingBox.top * bitmap.height).toInt()
+                        val bitmapWidth = ((boundingBox.right - boundingBox.left) * bitmap.width).toInt()
+                        val bitmapHeight = ((boundingBox.bottom - boundingBox.top) * bitmap.height).toInt()
+                        val croppedBitmap = Bitmap.createBitmap(bitmap,x,y,bitmapWidth,bitmapHeight)
+                        this.manageAnalyzedPupils(this.pupilTrackingDetector.analyze(croppedBitmap)) {
+                            BoundingBox(
+                                (boundingBox.left + (boundingBox.right - boundingBox.left) * it.left).coerceAtLeast(boundingBox.left).coerceAtMost(boundingBox.right),
+                                (boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.top).coerceAtLeast(boundingBox.top).coerceAtMost(boundingBox.bottom),
+                                (boundingBox.left + (boundingBox.right - boundingBox.left) * it.right).coerceAtLeast(boundingBox.left).coerceAtMost(boundingBox.right),
+                                (boundingBox.top + (boundingBox.bottom - boundingBox.top) * it.bottom).coerceAtLeast(boundingBox.top).coerceAtMost(boundingBox.bottom)
+                            )
+                        }
                     }
                 } catch (e : IllegalArgumentException) {}
             }
         }
     }
 
+    /**
+     * This method display on a preview view the founds detections
+     *
+     * @param[pupils] A list of detected pupils
+     * @param[adjustFunc] A function for set the correct position of pupil
+     */
     private fun manageAnalyzedPupils(pupils : List<DetectedObject>, adjustFunc : (BoundingBox) -> BoundingBox) {
         val analyzeView = findViewById<ConstraintLayout>(R.id.analyze_view)
 
@@ -384,6 +415,31 @@ class EyeTrackingActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * This method permits to check the current state of property [findPupils]
+     *
+     * @return The current state
+     */
+    private fun checkFindPupils() : Boolean {
+        this.findPupilsSemaphore.acquire()
+        val result = this.findPupils
+        this.findPupilsSemaphore.release()
+        return result
+    }
+
+    /**
+     * This method toggle the current state of property [findPupils]
+     *
+     * @return The toggled state
+     */
+    private fun toggleFindPupils() : Boolean {
+        this.findPupilsSemaphore.acquire()
+        val result = !this.findPupils
+        this.findPupils = result
+        this.findPupilsSemaphore.release()
+        return result
     }
 
     private fun DetectedObject.stringObjs() : String {

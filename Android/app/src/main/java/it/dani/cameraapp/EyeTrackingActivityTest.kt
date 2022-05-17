@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import it.dani.cameraapp.camera.EyeTrackingDetector
 import it.dani.cameraapp.camera.ObjectDetector
 import it.dani.cameraapp.camera.PupilTrackingDetector
+import java.lang.Integer.min
 
 class EyeTrackingActivityTest : AppCompatActivity() {
 
@@ -38,35 +39,37 @@ class EyeTrackingActivityTest : AppCompatActivity() {
 
                 val pupils = pupilTrackingDetector.analyze(croppedBitmap)
 
-                pupils.subList(0,2).forEach { pupil ->
-                    val pupilBox = pupil.boundingBox
-                    val cpyCroppedBitmap = croppedBitmap.copy(Bitmap.Config.ARGB_8888,true)
-                    val canvas = Canvas(cpyCroppedBitmap)
+                if(pupils.isNotEmpty()) {
+                    pupils.subList(0,min(pupils.size,2)).forEach { pupil ->
+                        val pupilBox = pupil.boundingBox
+                        val cpyCroppedBitmap = croppedBitmap.copy(Bitmap.Config.ARGB_8888,true)
+                        val canvas = Canvas(cpyCroppedBitmap)
 
-                    val rectF = Rect((pupilBox.left.coerceAtMost(1.0f) * canvas.width).toInt(),
-                        (pupilBox.top.coerceAtMost(1.0f) * canvas.height).toInt(),
-                        (pupilBox.right.coerceAtMost(1.0f) * canvas.width).toInt(),
-                        (pupilBox.bottom.coerceAtMost(1.0f) * canvas.height).toInt())
+                        val rectF = Rect((pupilBox.left.coerceAtMost(1.0f) * canvas.width).toInt(),
+                            (pupilBox.top.coerceAtMost(1.0f) * canvas.height).toInt(),
+                            (pupilBox.right.coerceAtMost(1.0f) * canvas.width).toInt(),
+                            (pupilBox.bottom.coerceAtMost(1.0f) * canvas.height).toInt())
 
-                    canvas.drawRect(rectF, Paint().apply {
-                        color = Color.RED
-                        strokeWidth = 10f
-                        style = Paint.Style.STROKE
-                    })
+                        canvas.drawRect(rectF, Paint().apply {
+                            color = Color.RED
+                            strokeWidth = 10f
+                            style = Paint.Style.STROKE
+                        })
 
-                    val canvasTotal = Canvas(cpyBitmap)
+                        val canvasTotal = Canvas(cpyBitmap)
 
-                    val rectFTotal = Rect(
-                        ((eyeBox.left + (eyeBox.right - eyeBox.left) * pupilBox.left) * canvasTotal.width).toInt(),
-                        ((eyeBox.top + (eyeBox.bottom - eyeBox.top) * pupilBox.top) * canvasTotal.height).toInt(),
-                        ((eyeBox.left + (eyeBox.right - eyeBox.left) * pupilBox.right) * canvasTotal.width).toInt(),
-                        ((eyeBox.top + (eyeBox.bottom - eyeBox.top) * pupilBox.bottom) * canvasTotal.height).toInt())
+                        val rectFTotal = Rect(
+                            ((eyeBox.left + (eyeBox.right - eyeBox.left) * pupilBox.left) * canvasTotal.width).toInt(),
+                            ((eyeBox.top + (eyeBox.bottom - eyeBox.top) * pupilBox.top) * canvasTotal.height).toInt(),
+                            ((eyeBox.left + (eyeBox.right - eyeBox.left) * pupilBox.right) * canvasTotal.width).toInt(),
+                            ((eyeBox.top + (eyeBox.bottom - eyeBox.top) * pupilBox.bottom) * canvasTotal.height).toInt())
 
-                    canvasTotal.drawRect(rectFTotal, Paint().apply {
-                        color = Color.RED
-                        strokeWidth = 10f
-                        style = Paint.Style.STROKE
-                    })
+                        canvasTotal.drawRect(rectFTotal, Paint().apply {
+                            color = Color.RED
+                            strokeWidth = 10f
+                            style = Paint.Style.STROKE
+                        })
+                    }
                 }
             } catch (e : IllegalArgumentException) {}
         }

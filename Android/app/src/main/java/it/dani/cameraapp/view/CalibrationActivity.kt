@@ -3,6 +3,7 @@ package it.dani.cameraapp.view
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -16,6 +17,7 @@ import androidx.lifecycle.LifecycleOwner
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.CameraManager
 import it.dani.cameraapp.camera.ObjectDetector
+import it.dani.cameraapp.camera.PupilTrackingDetector
 import it.dani.cameraapp.mock.EyeTrackingDetectorMock
 import it.dani.cameraapp.motion.GazeMotionDetector
 import it.dani.cameraapp.view.utils.PermissionUtils
@@ -49,7 +51,8 @@ class CalibrationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         super.setContentView(R.layout.calibration_activity)
 
-        this.dots = listOf<ImageButton>(findViewById(R.id.calibration_dot_tl),
+        this.dots = listOf<ImageButton>(
+            findViewById(R.id.calibration_dot_tl),
             findViewById(R.id.calibration_dot_tr),
             findViewById(R.id.calibration_dot_cc),
             findViewById(R.id.calibration_dot_bl),
@@ -62,7 +65,7 @@ class CalibrationActivity : AppCompatActivity() {
 
         this.resetOpacity(this.dots)
 
-        //this.animationThread = this.animation(dots)
+        this.animationThread = this.animation(dots)
 
         if(!PermissionUtils.permissionGranted(this, arrayOf(Manifest.permission.CAMERA))) {
             if(!this.beenAskedPermission) {
@@ -128,28 +131,32 @@ class CalibrationActivity : AppCompatActivity() {
 
         this.animationThread = this.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tl)))
 
-        GazeMotionDetector(analyzer).apply {
+        GazeMotionDetector(analyzer, PupilTrackingDetector(this)).apply {
             var gazeLeft : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
             var gazeRight : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
             var gazeUp : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
             var gazeDown : (Pair<Float,Float>,Pair<Float,Float>) -> Unit = {_,_->}
 
             gazeRight = { _, _ ->
+                Log.d("Gaze","Locking right")
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_tr)))
                 onGazeRight -= gazeRight
             }
             gazeDown = { _, _ ->
+                Log.d("Gaze","Locking down")
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_br)))
                 onGazeDown -= gazeDown
             }
             gazeLeft = { _, _ ->
+                Log.d("Gaze","Locking left")
                 this@CalibrationActivity.animationThread.shutdownNow()
                 this@CalibrationActivity.animationThread = this@CalibrationActivity.pulseAnimation(listOf(findViewById(R.id.calibration_dot_bl)))
                 onGazeLeft -= gazeLeft
             }
             gazeUp = { _, _ ->
+                Log.d("Gaze","Locking up")
                 this@CalibrationActivity.animationThread.shutdownNow()
                 onGazeUp -= gazeUp
             }
