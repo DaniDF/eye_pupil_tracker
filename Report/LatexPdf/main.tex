@@ -201,13 +201,13 @@
 \fancyfoot[L]{\thepage}
 \setcounter{page}{1}
 \section{Introduzione}
-Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando una rete neurale, sia in grado di riconoscere gli occhi e le pupille dell'utente. Il sistema sfrutterà un modello di rete neurale
-addestrato in modo tale da essere in grado di riconoscere gli occhi e le pupille di uno o più utenti grazie ad un dataset di 10 mila immagini di visi umani ed ad un altro contenente 5 mila immagini di pupille.
+Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando due reti neurali, sia in grado di riconoscere gli occhi e le pupille dell'utente. Il sistema sfrutterà due modelli di rete neurale
+addestrati in modo tale da essere in grado di riconoscere gli occhi e le pupille di uno o più utenti grazie ad un dataset di 10 mila immagini di visi umani ed ad un altro contenente 5 mila immagini di pupille.
 L’applicativo permetterà di svolgere un filtraggio "live", cioè aprendo la camera frontale ed esterna dello smartphone e individuando real-time gli occhi e le pupille dell’utente.
 \newline
 Inoltre, è stato implementato un gioco composto da un Quiz di 4 domande aiutato da un tool di calibrazione. L'utente tramite il riconoscitore di occhi è in grado di rispondere ad una certa domanda spostando, tramite gli occhi e il cellulare, un puntatore verso la risposta giusta posta ai 4 angoli del dispositivo. In caso di risposta corretta, viene posta un'ulteriore domanda, altrimenti si viene avvertiti della domanda sbagliata tramite un alert.
 \newline \newline
-Tale caso di studio è un classico esempio di applicazione di Machine Learning e il software farà ricorso a una rete neurale convoluzionale (CNN). Tale scelta è dovuta al fatto che una rete neurale rappresenta il modo più comodo e pratico per problemi di object detection, come quello di questa attività in cui vengono individuati gli occhi.
+Tale caso di studio è un classico esempio di applicazione di Machine Learning e il software farà ricorso a una rete neurale convoluzionale (CNN). Tale scelta è dovuta al fatto che una rete neurale rappresenta il modo più comodo e pratico per problemi di object detection, come quello di questa attività in cui vengono individuati gli occhi e le pupille.
 \newline \newline
 L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale progetto pone attenzione anche all’uso di risorse in quanto dovrà funzionare su smartphone, ovvero dispositivi embedded.
 
@@ -217,6 +217,8 @@ L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale pr
 L’obiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. Successivamente, si è prodotto un modello di rete neurale addestrata in grado di riconoscere le pupille degli esseri umani.
 \newline
 A tal scopo si è utilizzato un modello messo a disposizione dalla libreria \textit{TensorFlow 2 Detection Model Zoo} ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
+
+\newpage
 
 \subsection{Eye Detection}
 \subsubsection{Dataset}
@@ -251,9 +253,12 @@ TensorBoard fornisce la visualizzazione e gli strumenti necessari per la sperime
 \end{itemize}
 
 
+\begin{figure}[h]
+\caption{Tensorboard Learning\_rate}
+\centering
+\includegraphics[scale=0.7]{img/learning_rate_both_edited.png}
+\end{figure}
 
-INSERIRE IMMAGINI GRAFICI
-\newline
 Si è ottenuto in output un modello addestrato e pronto all’uso.
 \newline \newline
 Prima di testare direttamente su Android, abbiamo deciso prima di testare e analizzare la nostra nuova rete utilizzando la libreria Matplotlib, utile per visualizzare graficamente via shell i nostri risultati. In particolare abbiamo usato \textbf{Tkinter}, l'unico framework GUI incluso nella libreria standard di Python.
@@ -355,7 +360,7 @@ Modalità la cui utilità è quella di individuare real time gli occhi della per
 \end{itemize}
 
 \begin{figure}[h]
-\caption{Nerd mode iniziale }
+\caption{Schermata Nerd mode }
 \centering
 \includegraphics[scale=0.17]{img/nerd.png}
 \end{figure}
@@ -368,10 +373,19 @@ Bottone premuto una volta avviata la \textit{Preview}, ci permette di vedere per
 Chiaramente più viene allontanato il telefono dalla faccia, più cala la precisione, ma comunque la rete individua sempre e comunque gli occhi a meno che non si provino a nascondere gli occhi o ci si metta di profilo.
 
 \begin{figure}[h]
-\caption{Nerd mode con analyze attiva }
+\caption{Schermata Nerd mode con analyze attiva }
 \centering
 \includegraphics[scale=0.17]{img/analyze.png}
 \end{figure}
+
+\subsubsection{Riconoscimento pupilla}
+Il riconoscimento della pupilla sfrutta in un primo momento la rete neurale del riconoscimento degli occhi, la quale restituisce al nostro sistema solamente l'immagine contenente l'occhio.\\ Quindi, la rete neurale della pupilla usa questa immagine ritagliata per riconoscere e calcolare i bordi attorno alla pupilla, restituendo quindi i quadrati attorno a queste ultime.
+\begin{figure}[h]
+\caption{Schermata Nerd mode con pupilla }
+\centering
+\includegraphics[scale=0.25]{img/gazeAndroid.png}
+\end{figure}
+
 
 \subsection{Calibration}
 Modalità usata per calibrare al meglio la fotocamera e ottenere risultati i più veritieri possibili. Utile per svolgere al meglio il mini gioco descritto in seguito. Qui di sotto la sua schermata.
