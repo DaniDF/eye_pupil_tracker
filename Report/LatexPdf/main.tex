@@ -94,7 +94,7 @@
     citecolor=cyan,
     linkcolor=black,
     urlcolor=black,
-    pdftitle=EYE TRACKER,
+    pdftitle=EYE-GAZE TRACKER,
     pdfauthor= Filippo Veronesi,
     }
 
@@ -129,7 +129,7 @@
 			
 	\vspace{2.3cm}
 
-	{\upshape\large\bfseries EYE TRACKER\par}
+	{\upshape\large\bfseries EYE-GAZE TRACKER\par}
 	\vspace{2.5cm}
 	{\upshape\large\bfseries Luigi di Nuzzo - Daniele Foschi - Filippo Veronesi\par}
 	\end{center}
@@ -216,7 +216,7 @@ L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale pr
 \section{Rete Neurale}
 L’obiettivo primario di questo task è produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. Successivamente, si è prodotto un modello di rete neurale addestrata in grado di riconoscere le pupille degli esseri umani.
 \newline
-A tal scopo si è utilizzato un modello messo a disposizione dalla libreria \textit{TensorFlow 2 Detection Model Zoo} ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
+A tali scopi si è utilizzato un modello messo a disposizione dalla libreria \textit{TensorFlow 2 Detection Model Zoo} ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
 
 \newpage
 
@@ -386,7 +386,7 @@ Il riconoscimento della pupilla sfrutta in un primo momento la rete neurale del 
 \includegraphics[scale=0.25]{img/gazeAndroid.png}
 \end{figure}
 
-
+\newpage
 \subsection{Calibration}
 Modalità usata per calibrare al meglio la fotocamera e ottenere risultati i più veritieri possibili. Utile per svolgere al meglio il mini gioco descritto in seguito. Qui di sotto la sua schermata.
 
@@ -422,9 +422,9 @@ Gli obiettivi del progetto sono stati raggiunti a pieno e con risultati soddisfa
 L’applicativo è
 conforme alle aspettative e svolge i compiti adeguatamente.
 Le parti realizzate
-in Android risultano con prestazione adeguate.
+in Android risultano con prestazione adeguate, nonostante i cali di precisione dovuti alla conversione in modello .tflite.
 \newline \newline
-Il modello addestrato restituisce un output corretto la maggior parte delle volte con una precisione di eye tracking del 95\%.
+Il modello addestrato restituisce un output corretto la maggior parte delle volte con una precisione di eye tracking superiore al 85\% e di gaze tracking superiore al 95\%, precisione che una volta importato su Android cala, ma mantenendo sempre risultati soddisfacenti.
 
 
 
