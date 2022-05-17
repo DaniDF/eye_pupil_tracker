@@ -1,6 +1,6 @@
 # Eye&Gaze Tracker
 
-![merge](https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/merge.jpg)
+![merge](https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/latex/merge.jpg)
 
 
 
