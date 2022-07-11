@@ -1,6 +1,7 @@
 package it.dani.cameraapp.view
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import it.dani.cameraapp.R
@@ -30,6 +32,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         super.setContentView(R.layout.main_activity)
         ViewUtils.hideSystemBars(this.window)
+
+        findViewById<TextView>(R.id.textVersionName).apply {
+            text = this@MainActivity.packageManager.getPackageInfo(this@MainActivity.packageName,PackageManager.GET_ACTIVITIES).versionName
+        }
 
         this.sensorManager = this.getSystemService(SENSOR_SERVICE) as SensorManager
         this.accelerometerSensor = this.sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
