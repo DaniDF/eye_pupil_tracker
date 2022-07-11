@@ -221,13 +221,15 @@ A tali scopi si è utilizzato un modello messo a disposizione dalla libreria \te
 \newpage
 
 \subsection{Eye Detection}
+La prima rete neurale riguarda il riconoscimento degli occhi di esseri umani, la quale risulterà essere il primo passo per eseguire anche un corretto riconoscimento delle pupille. Infatti, durante l'implementazione Android, l'output di questa rete, verrà usata come input per la seconda rete neurale incaricata del riconoscimento delle pupille. In questa fase ci limitiamo a creare una rete neurale in grado di riconoscere gli occhi.
+
 \subsubsection{Dataset}
 Per il training del modello si è utilizzato un dataset pubblico rilasciato da Google\footnote{Open Image V6, \url{https://storage.googleapis.com/openimages/web/index.html?v6}} contenente 10 mila immagini di visi umani, dove ogni foto conteneva da uno a più visi umani.
 \newline
 Oltre alle immagini il dataset conteneva un utile file \textit{Excel} che indicava le coordinate della posizione degli occhi delle persone all'interno dell'immagine.
 \newline \newline
-Prima dell'addestramento della rete era però necessario convertire questi dati di input in file \textit{*.xml} in modo tale da poterli poi usare per generare i \textbf{TFRecord}, utili per TensorFlow. Per questo motivo è stato implementato uno script \textit{Java} in grado di creare un file \textit{.xml} per ogni foto del dataset estraendo le informazioni dal file \textit{Excel} le informazioni geografiche della posizione degli occhi e il nome del'oggetto da riconoscere. 
-Inoltre, per la corretta generazione dei \textbf{TFRecord}, si è reso necessario compilare il file \textit{labelmap.pbtxt} con al suo interno i nomi e gli id di nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "Human eye".
+Prima dell'addestramento della rete era però necessario convertire questi dati di input in file \textit{*.xml} in modo tale da poterli poi usare per generare i \textbf{TFRecord}, utili per TensorFlow. Per questo motivo è stato implementato uno script \textit{Java} in grado di creare un file \textit{.xml} per ogni foto del dataset estraendo le informazioni dal file \textit{Excel}. Le informazioni più importanti per il nostro progetto che sono state estratte sono: i dati geografici delle posizioni degli occhi (x e y, sia min che max) e il nome del'oggetto da riconoscere. 
+Inoltre, per la corretta generazione dei \textbf{TFRecord}, si è reso necessario compilare il file \textit{labelmap.pbtxt} con al suo interno i nomi e gli id dei nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "Human eye".
 
 \begin{figure}[h]
 \caption{Eye Detection labelmap.pbtxt}
@@ -296,6 +298,7 @@ Una volta generato questo nuovo file metadata.tflite siamo pronti ad importarlo 
 
 \newpage    
 \subsection{Pupil Detection}
+Per quanto riguarda invece la rete neurale incaricata al riconoscimento delle pupille, viene creata e addestrata in maniera simile alla nostra prima rete neurale. In questa fase ci limitiamo a crearla, in un secondo momento, durante l'implementazione Android, essa userà come input l'output della prima rete neurale dedicata agli occhi. 
 
 \subsubsection{Dataset}
 Per il training del modello si è utilizzato un dataset pubblico rilasciato da Kaggle\footnote{\url{https://www.kaggle.com/datasets/pavelbiz/eyes-rtte}} contenente 5 mila immagini di sole pupille umane, comodo per il raggiungimento del nostro obiettivo di pupil detection.
@@ -303,7 +306,7 @@ Per il training del modello si è utilizzato un dataset pubblico rilasciato da K
 Questa volta, per ottenere i file \textit{*.xml} di ogni immagine, abbiamo usufruito di un tool grafico chiamato \textbf{LabelImage}, scaricabile gratuitamente su Github\footnote{\url{https://github.com/tzutalin/labelImg}}. Questo tool ci permetteva di costruire i boxes attorno alla pupilla ottenendo in output per ogni immagine un file \textit{*.xml} contenente le informazioni necessarie: come il nome dell'oggetto su cui si è costruito attorno il box ("pupil"), e le relative coordinate geografiche dei 4 punti del box (xmin, ymin, xmax, ymax)
 \newline \newline
 Prima dell'addestramento della rete era però necessario, usando questi nuovi dati \textit{*.xml}, generare i \textbf{TFRecord}, utili per TensorFlow.
-Inoltre, per la corretta generazione dei \textbf{TFRecord}, si è reso necessario compilare il file \textit{labelmap.pbtxt} con al suo interno i nomi e gli id di nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "pupil".
+Inoltre, per la corretta generazione dei \textbf{TFRecord}, si è reso necessario compilare il file \textit{labelmap.pbtxt} con al suo interno i nomi e gli id dei nostri oggetti da riconoscere: nel nostro caso un solo item di id pari a 1 e con nome "pupil".
 
 \begin{figure}[h]
 \caption{Pupil Detection labelmap.pbtxt}
@@ -351,7 +354,7 @@ Sono da segnalare i 3 principali bottoni dell'applicazione:
 \end{itemize}
 
 \subsection{Nerd Mode}
-Modalità la cui utilità è quella di individuare real time gli occhi della persona, in particolare permette di vedere i boxes creati dalla rete neurale attorno agli occhi dell'utente.
+Modalità la cui utilità è quella di individuare real time gli occhi e le pupille della persona, in particolare permette di vedere i boxes creati dalla rete neurale attorno ai nostri due oggetti da riconoscere.
 \\Interfaccia che presenta 3 bottoni:
 \begin{itemize}
     \item \textbf{Preview} che permette di avviare la propria fotocamera frontale o esterna;
@@ -368,7 +371,7 @@ Modalità la cui utilità è quella di individuare real time gli occhi della per
 \newpage
 \subsubsection{Bottone Analyze}
 Bottone premuto una volta avviata la \textit{Preview}, ci permette di vedere per la prima volta la nostra rete addestrata al lavoro su Android.
-È stata inserita anche una barra di scorrimento in modo tale da impostare e mostrare real time a schermo gli occhi individuati solo sopra una certo livello di precisione della rete. (0\% minimo - 100\% massimo). Su Android se si inquadrano bene gli occhi, in media si ha una precisione del 80\%. 
+È stata inserita anche una barra di scorrimento in modo tale da impostare e mostrare real time a schermo gli occhi e le pupille individuate solo sopra una certo livello di precisione della rete. (0\% minimo - 100\% massimo). Su Android se si inquadrano bene gli occhi, in media si ha una precisione del 80\%. 
 \newline
 Chiaramente più viene allontanato il telefono dalla faccia, più cala la precisione, ma comunque la rete individua sempre e comunque gli occhi a meno che non si provino a nascondere gli occhi o ci si metta di profilo.
 
@@ -379,7 +382,7 @@ Chiaramente più viene allontanato il telefono dalla faccia, più cala la precis
 \end{figure}
 
 \subsubsection{Riconoscimento pupilla}
-Il riconoscimento della pupilla sfrutta in un primo momento la rete neurale del riconoscimento degli occhi, la quale restituisce al nostro sistema solamente l'immagine contenente l'occhio.\\ Quindi, la rete neurale della pupilla usa questa immagine ritagliata per riconoscere e calcolare i bordi attorno alla pupilla, restituendo quindi i quadrati attorno a queste ultime.
+Il riconoscimento della pupilla sfrutta come input l'output della rete neurale del riconoscimento degli occhi, la quale infatti restituisce al nostro sistema solamente l'immagine ritagliata contenente l'occhio.\\ Quindi, la rete neurale della pupilla usa questa immagine ritagliata per riconoscere e calcolare i bordi attorno alla pupilla, restituendo quindi i quadrati attorno a queste ultime.
 \begin{figure}[h]
 \caption{Schermata Nerd mode con pupilla }
 \centering
