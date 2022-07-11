@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.CameraManager
 import it.dani.cameraapp.camera.EyeTrackingDetector
-import it.dani.cameraapp.camera.ObjectDetection
+import it.dani.cameraapp.camera.ObjectDetector
 import it.dani.cameraapp.game.Question
 import it.dani.cameraapp.game.QuestionDB
 import it.dani.cameraapp.game.QuestionFetcher
@@ -142,7 +142,7 @@ class GameActivity : AppCompatActivity() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        val analyzer : ObjectDetection = EyeTrackingDetector(this).apply {
+        val analyzer : ObjectDetector = EyeTrackingDetector(this).apply {
             accuracyThreshold = 0.5f
         }
 

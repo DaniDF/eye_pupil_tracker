@@ -35,6 +35,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/pupil_detector_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/analyze_image_button_start"
+        android:backgroundTint="?attr/colorPrimary"
+        android:textColor="?attr/colorOnPrimary"
+        android:contentDescription="@string/analyze_image_enable_pupil_button"
+        app:tint="?attr/colorOnPrimary"
+        app:srcCompat="@drawable/ic_pupil_on"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/analyze_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preview_button" />
+
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/preview_button"

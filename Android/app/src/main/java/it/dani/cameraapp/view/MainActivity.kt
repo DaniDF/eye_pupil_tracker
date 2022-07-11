@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<ImageButton>(R.id.calibrationButton).apply {
             setOnClickListener {
                 val intent = Intent(this@MainActivity, CalibrationActivity::class.java)
+                //val intent = Intent(this@MainActivity, EyeTrackingActivityTest::class.java)
                 this@MainActivity.startActivity(intent)
 
                 this.setOnClickListener {  }

@@ -7,7 +7,7 @@ import it.dani.cameraapp.camera.BoundingBox
 import it.dani.cameraapp.camera.DetectedObject
 import it.dani.cameraapp.camera.ImageUtils.rotateBitmap
 import it.dani.cameraapp.camera.ImageUtils.toBitmap
-import it.dani.cameraapp.camera.ObjectDetection
+import it.dani.cameraapp.camera.ObjectDetector
 import org.tensorflow.lite.support.label.Category
 
 /**
@@ -15,7 +15,7 @@ import org.tensorflow.lite.support.label.Category
  *
  * This class emulates the behavior of [it.dani.cameraapp.camera.EyeTrackingDetector] (only for testing), simulates a sequence of eye movements
  */
-class EyeTrackingDetectorMock : ObjectDetection() {
+class EyeTrackingDetectorMock : ObjectDetector() {
 
     /**
      * @property[currentPosition] The fake current eye position on the list of emulated movements
