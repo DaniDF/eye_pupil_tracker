@@ -27,7 +27,7 @@ class EyeTrackingDetector(context: Context) : ObjectDetector() {
     /**
      * @property[objectDetector] The object detector object
      */
-    private val objectDetector = try {
+    private val objectDetector = /*try {
         val customObjectDetectorOptions = when(CompatibilityList().isDelegateSupportedOnThisDevice) {
             true -> Model.Options.Builder().setDevice(Model.Device.GPU).build()
             false -> {
@@ -42,7 +42,7 @@ class EyeTrackingDetector(context: Context) : ObjectDetector() {
 
         val customObjectDetectorOptions = Model.Options.Builder().setNumThreads(4).build()
         EyeF16Metadata.newInstance(context, customObjectDetectorOptions)
-    }
+    }*/EyeF16Metadata.newInstance(context,Model.Options.Builder().setNumThreads(4).build())
 
 
     /**
