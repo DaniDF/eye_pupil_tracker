@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +16,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import it.dani.cameraapp.R
 import it.dani.cameraapp.camera.CameraManager
@@ -35,7 +35,7 @@ class GameActivity : AppCompatActivity() {
 
     private var index = 0
     private lateinit var questionDB : QuestionDB
-    private lateinit var buttons : List<ExtendedFloatingActionButton>
+    private lateinit var buttons : List<Button>
     private var beenAskedPermission = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,7 +95,7 @@ class GameActivity : AppCompatActivity() {
         this.buttons.forEachIndexed { i,b ->
             b.apply {
                 if(i < answers.size) {
-                    text = answers[i].value
+                    text = this@GameActivity.formatButtonText(answers[i].value)
                     setOnClickListener {
                         val response = when(this.text) {
                             question.correctAnswer.value -> {
@@ -110,6 +110,30 @@ class GameActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun formatButtonText(text : String) : String {
+        val result = StringBuilder()
+        var currentButtonLine = ""
+        text.split(" ").forEach {
+            currentButtonLine = if(currentButtonLine.length + it.length < MAX_CHARS_BUTTON) {
+                "$currentButtonLine $it"
+            } else {
+                if(result.toString().isNotEmpty()) {
+                    result.append("\n")
+                }
+                result.append(currentButtonLine)
+                it
+            }
+        }
+
+        if(result.toString().isNotEmpty()) {
+            result.append("\n")
+        }
+
+        result.append(currentButtonLine)
+
+        return result.toString().trim()
     }
 
     private fun correctAnswerAction() {
@@ -202,5 +226,6 @@ class GameActivity : AppCompatActivity() {
 
     companion object {
         private const val DOT_RADIUS = 100f
+        private const val MAX_CHARS_BUTTON = 15
     }
 }

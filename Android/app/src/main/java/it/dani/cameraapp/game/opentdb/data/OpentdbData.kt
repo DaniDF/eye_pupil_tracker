@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import it.dani.cameraapp.game.Answer
 import it.dani.cameraapp.game.Question
 import it.dani.cameraapp.game.QuestionDB
+import org.apache.commons.text.StringEscapeUtils
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.StringBuilder
@@ -58,6 +59,7 @@ class OpentdbUtils {
             }
 
             val gson = Gson()
+
             return convert(gson.fromJson(resultJson.toString(),OpentdbData::class.java))
         }
 
@@ -72,7 +74,12 @@ class OpentdbUtils {
 
             data.results.forEach { r ->
                 questionList += Question(
-                    r.category,r.type,r.difficulty,r.question,Answer(r.correct_answer),r.incorrect_answers.map { Answer(it) }
+                    r.category,
+                    r.type,
+                    r.difficulty,
+                    StringEscapeUtils.unescapeHtml4(r.question),
+                    Answer(StringEscapeUtils.unescapeHtml4(r.correct_answer)),
+                    r.incorrect_answers.map { Answer(StringEscapeUtils.unescapeHtml4(it)) }
                 )
             }
 

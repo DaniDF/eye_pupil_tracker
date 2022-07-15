@@ -17,28 +17,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.06999999">
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <Button
             android:id="@+id/aResponse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
+            android:paddingTop="@dimen/game_answer_padding_vertical"
+            android:paddingBottom="@dimen/game_answer_padding_vertical"
             android:text="@string/game_a_answer_default"
             android:textColor="?attr/colorOnPrimary"
-            app:iconTint="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <Button
             android:id="@+id/bResponse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
+            android:paddingTop="@dimen/game_answer_padding_vertical"
+            android:paddingBottom="@dimen/game_answer_padding_vertical"
             android:text="@string/game_b_answer_default"
             android:textColor="?attr/colorOnPrimary"
-            app:iconTint="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.88"
@@ -94,28 +96,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.93">
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <Button
             android:id="@+id/cResponse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
+            android:paddingTop="@dimen/game_answer_padding_vertical"
+            android:paddingBottom="@dimen/game_answer_padding_vertical"
             android:text="@string/game_c_answer_default"
             android:textColor="?attr/colorOnPrimary"
-            app:iconTint="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        <Button
             android:id="@+id/dResponse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/colorPrimary"
+            android:paddingTop="@dimen/game_answer_padding_vertical"
+            android:paddingBottom="@dimen/game_answer_padding_vertical"
             android:text="@string/game_d_answer_default"
             android:textColor="?attr/colorOnPrimary"
-            app:iconTint="?attr/colorOnPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.88"

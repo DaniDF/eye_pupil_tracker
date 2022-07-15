@@ -9,4 +9,6 @@
     <dimen name="game_question_padding">10dp</dimen>
     <dimen name="game_question_text_size">20sp</dimen>
 
+    <dimen name="game_answer_padding_vertical">20dp</dimen>
+
 </resources>
