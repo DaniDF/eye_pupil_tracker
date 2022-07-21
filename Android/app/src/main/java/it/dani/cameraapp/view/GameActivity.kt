@@ -52,7 +52,7 @@ class GameActivity : AppCompatActivity() {
                         findViewById<View>(R.id.waitingOverlay).apply { visibility = View.GONE }
                     }
                     this@GameActivity.index = 0
-                    this@GameActivity.questionDB = QuestionDB(it.questions.filter { q -> q.incorrectAnswer.size == 3})
+                    this@GameActivity.questionDB = QuestionDB(it.questions.filter { q -> q.incorrectAnswer.size == 3 })
 
                     try {
                         this@GameActivity.displayGame(it,this@GameActivity.index)
@@ -64,6 +64,10 @@ class GameActivity : AppCompatActivity() {
         }
 
         this.questionFetcher.fetch()
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         if(!PermissionUtils.permissionGranted(this, arrayOf(Manifest.permission.CAMERA))) {
             if(!this.beenAskedPermission) {
