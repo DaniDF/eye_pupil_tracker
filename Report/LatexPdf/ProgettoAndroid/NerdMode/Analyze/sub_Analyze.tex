@@ -1,0 +1,9 @@
+Il bottone "\textit{Analyze}" (vedi figura \ref{fig:nerdmodelayout}) è abilitato ad essere premuto sono quando è contemporaneamente abilitata la funzione "\textit{Preview}".
+
+Alla pressione del bottone viene innescata l'analisi in tempo reale delle immagini acquisite e passate alla rete neurale per il processamento \textit{Eye-Tracking} (vedi \ref{sec:eyedetection}).
+
+Al termine dell'analisi i risultati del tracciamento vengono mostrati a schermo su un livello grafico sovrapposto a quello di \textit{preview} della camera. Si ottiene una visualizzazione del contorno degli occhi trovati tramite rettangolo colorato e la corrispettiva accuratezza (vedi \ref{fig:nerdmode}).
+
+È stato fondamentale gestire correttamente l'orientamento dell'immagine qualora l'utente cambi fotocamera. La fotocamera interna infatti produrrà un risultato specchiato rispetto alla visualizzazione, pertanto prima di mostrare a video i risultati ottenuti andranno orientati in base alla camera d'origine di tali dati.
+
+Posizionato immediatamente sotto la parte di \textit{preview} è stato aggiunto uno \textit{slider} che permette di filtrare i risultati ottenuti tramite valore minimo di accuratezza.

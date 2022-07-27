@@ -1,0 +1,3 @@
+Per un corretto funzionamento della rete neurale all'interno di Android, TfLite richiede che venga generato anche un file Metadata che contiene le informazioni necessarie per pre-processare le immagini. Questo file si rende necessario in quanto i nostri tensori di input sono di tipo kTfLiteFloat32. È necessario creare un nuovo \textit{label\_map.txt} con al suo interno nella prima riga il nostro item per la detection: nel nostro caso \textit{"Human eye"}.
+
+Una volta generato questo nuovo file metadata.tflite siamo pronti ad importarlo all'interno della nostra applicazione Android come file di Machine Learning "$ml$".

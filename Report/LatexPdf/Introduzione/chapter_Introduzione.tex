@@ -1,0 +1,9 @@
+Questo progetto prevede la realizzazione di un applicativo Android che, sfruttando due reti neurali, sia in grado di riconoscere gli occhi e le pupille dell'utente. Il sistema sfrutterà due modelli di rete neurale
+addestrati in modo tale da essere in grado di riconoscere gli occhi e le pupille di uno o più utenti utilizzando due dataset: uno avente 10 mila immagini di visi umani ed ad un altro contenente 5 mila immagini di sole pupille.
+L’applicativo permetterà di svolgere un filtraggio "live", cioè aprendo la camera frontale ed esterna dello smartphone e individuando real-time gli occhi e le pupille dell’utente.
+
+Inoltre, è stato implementato un gioco composto da un Quiz di 4 domande aiutato da un tool di calibrazione. L'utente tramite il riconoscitore di occhi è in grado di rispondere ad una certa domanda spostando, tramite gli occhi e il cellulare, un puntatore verso la risposta giusta posta ai 4 angoli del dispositivo. In caso di risposta corretta, viene posta un'ulteriore domanda, altrimenti si viene avvertiti della risposta sbagliata tramite un alert.
+
+Tale caso di studio è un classico esempio di applicazione di Machine Learning e il software farà ricorso a una rete neurale convoluzionale (CNN). Tale scelta è dovuta al fatto che una rete neurale rappresenta il modo più comodo e pratico per problemi di object detection, come quello di questa attività in cui vengono individuati gli occhi e le pupille.
+
+L’applicativo, inoltre, è pensato per la piattaforma Android e quindi tale progetto pone attenzione anche all’uso di risorse in quanto dovrà funzionare su smartphone, ovvero dispositivi embedded.

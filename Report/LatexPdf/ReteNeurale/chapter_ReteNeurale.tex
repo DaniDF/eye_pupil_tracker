@@ -1,0 +1,11 @@
+L’obiettivo primario di questo task è quello di produrre un modello di rete neurale addestrata in grado di riconoscere gli occhi di una o più persone. Successivamente, si è prodotto un modello di rete neurale addestrata in grado di riconoscere le pupille degli esseri umani.
+
+A tali scopi si è utilizzato un modello messo a disposizione dalla libreria \textit{TensorFlow 2 Detection Model Zoo \cite{tensorflow_repo}} ottimizzato per il training di modelli specifici per object detection di immagini. Visto l’ambito dei sistemi embedded nel quale il progetto complessivo si colloca si è optato per un modello SSD MobileNet\footnote{SSD MobileNet V2 FPNLite 640x640}\cite{mobilenet_repo}, una CNN pensata per dispositivi mobile. MobileNet è il primo modello di computer vision pensato per dispositivi embedded basato su TensorFlow. MobileNet è sufficientemente leggera e veloce da essere eseguita su smartphone senza consumo di risorse eccessivo mantenendo comunque una precisione adeguata.
+
+\section{Eye detection}
+\label{sec:eyedetection}
+\input{ReteNeurale/EyeDetection/section_EyeDetection}
+
+\section{Attività progettuale: Pupil detection}
+\label{sec:gazedetection}
+\input{ReteNeurale/PupilDetection/section_PupilDetection}

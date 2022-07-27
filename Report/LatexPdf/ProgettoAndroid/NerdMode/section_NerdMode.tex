@@ -1,0 +1,35 @@
+\begin{figure}[htbp]
+    \centering
+    \subfigure[Schermata Nerd layout]{
+    \includegraphics[scale=0.13]{ProgettoAndroid/NerdMode/Images/CameraApp_Screen_nerd_layout.jpg}
+    \label{fig:nerdmodelayout}
+    }
+    \subfigure[Schermata Nerd mode con camera attiva]{
+    \includegraphics[scale=0.13]{ProgettoAndroid/NerdMode/Images/CameraApp_Screen_nerd.jpg}
+    \label{fig:nerdmode}
+    }
+    \caption{Schermata Nerd}
+    \label{fig:nerd}
+\end{figure}
+
+La schermata "\textit{Nerd}" è stata pensata per mostrare in modo grafico e con la maggior facilità possibile tutte le informazioni che la telecamera del dispositivo è in grado di acquisire.
+
+Nella parte più alta dello schermo viene mostrato ciò che la telecamera acquisisce e sovrapposto l'analisi della stessa immagine tramite la rete neurale.
+
+Per ogni occhio rilevato dalla rete neurale appare a schermo un rettangolo di colori diversi per evidenziare in che posizione è stata effettuato il tracciamento. Ulteriormente viene indicato per ogni identificazione qual è la sua accuratezza con un valore numerico decimale nell'intervallo $[0,1]$.
+
+\subsection{Preview}
+\label{sub:preview}
+\input{ProgettoAndroid/NerdMode/Preview/sub_Preview}
+
+\subsection{Switch camera}
+\label{sub:switchcamera}
+\input{ProgettoAndroid/NerdMode/SwitchCamera/sub_SwitchCamera}
+
+\subsection{Analyze}
+\label{sub:analyze}
+\input{ProgettoAndroid/NerdMode/Analyze/sub_Analyze}
+
+\subsection{Attività progettuale: Riconoscimento pupilla}
+\label{sub:riconoscimentopupilla}
+\input{ProgettoAndroid/NerdMode/RiconoscimentoPupilla/sub_RiconoscimentoPupilla}
