@@ -13,9 +13,9 @@ Android application able to recognize, with the help of two neural networks, the
 > + [Remote_training][lk_rt]: tools for neural network training
 > + [Report][lk_rp]: Latex Report Pdf + PowerPoint Presentation + Jupyter Notebook
 
-[lk_andr]: https://github.com/luigidinuzzo/sistemiDigitali2022/tree/master/Android	"Android"
-[lk_csv]: https://github.com/luigidinuzzo/sistemiDigitali2022/tree/master/CSVConverter "CSVConverter"
-[lk_rt]: https://github.com/luigidinuzzo/sistemiDigitali2022/tree/master/Remote_training "Remote training"
+[lk_andr]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/Android	"Android"
+[lk_csv]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/CSVConverter "CSVConverter"
+[lk_rt]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/Remote_training "Remote training"
 [lk_rp]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/Report "Report"
 [lk_tf]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/Models/tflite "Models"
 [lk_mod]: https://github.com/DaniDF/sistemiDigitali2022/tree/master/LabelImgModifier/LabelImgModifier "LabelImgModifier"
@@ -25,7 +25,7 @@ Android application able to recognize, with the help of two neural networks, the
 1. Download the apk file [here][lk_apk]
 2. Install it on android device
 
-<img src="https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/CameraApp_Screen_home.jpg" width="250">
+<img src="https://github.com/DaniDF/eye_pupil_tracker/blob/master/Report/LatexPdf/ProgettoAndroid/Images/CameraApp_Screen_home.jpg" width="250">
 
 ## Overview
 
@@ -33,7 +33,7 @@ Android application able to recognize, with the help of two neural networks, the
 * [**Nerd mode**](#Nerd-mode) (_top right_): shows all the information acquired from the camera
 * [**Calibration**](#Calibration)
 
-[ lk_apk ]: https://github.com/DaniDF/sistemiDigitali2022/releases/download/v1.0.2/GazeDetection_v2.1.6.apk	" Apk download link"
+[ lk_apk ]: https://github.com/DaniDF/sistemiDigitali2022/releases/download/v1.0.2/GazeDetection_v2.1.6.apk	"Apk download link"
 [ lk_opentdb ]: https://opentdb.com "OpentDB official site"
 
 ### Play game
@@ -41,7 +41,7 @@ Android application able to recognize, with the help of two neural networks, the
 > In this part moving the eyes you will move the red dot. Moving the red dot over an answer you will confirm it.
 > Enjoy the game
 
-<img src="https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/CameraApp_Screen_quiz.jpg" width="250">
+<img src="https://github.com/DaniDF/eye_pupil_tracker/blob/master/Report/LatexPdf/ProgettoAndroid/Game/Images/CameraApp_Screen_quiz.jpg" width="250">
 
 ### Nerd mode
 
@@ -51,11 +51,11 @@ Android application able to recognize, with the help of two neural networks, the
 >
 > With the **_Eye_** button the _gaze-tracking_ starts and the result is showed on top of the _eye-tracking_'s results.
 
-<img src="https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/CameraApp_Screen_nerd_layout.jpg" width="250">
+<img src="https://github.com/DaniDF/eye_pupil_tracker/blob/master/Report/LatexPdf/ProgettoAndroid/NerdMode/Images/CameraApp_Screen_nerd_layout.jpg" width="250">
 
 ### Calibration
 
-<img src="https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/CameraApp_Screen_calibration.jpg" width="250">
+<img src="https://github.com/DaniDF/eye_pupil_tracker/blob/master/Report/LatexPdf/ProgettoAndroid/Calibration/Images/CameraApp_Screen_calibration.jpg" width="250">
 
 ## Authors
 
