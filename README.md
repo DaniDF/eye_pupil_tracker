@@ -2,7 +2,7 @@
 
 Android application able to recognize, with the help of two neural networks, the eyes and pupils of the faces captured by the phone's camera.
 
-![merge](https://github.com/DaniDF/sistemiDigitali2022/blob/master/Report/LatexPdf/img/latex/merge.jpg)
+![merge](https://github.com/DaniDF/eye_pupil_tracker/blob/master/Report/LatexPdf/merge.png)
 
 ## Folders
 
